@@ -3,7 +3,6 @@
 import {
   Box,
   Container,
-  Flex,
   Grid,
   GridItem,
   Heading,
@@ -14,7 +13,6 @@ import {
   HStack,
   Button,
   useColorModeValue,
-  Divider,
   SimpleGrid
 } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";

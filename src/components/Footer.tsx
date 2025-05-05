@@ -1,5 +1,5 @@
-import { colors } from '@/utils/color';
-import { Box, Container, SimpleGrid, Stack, Text, Link, Image, IconButton, HStack, Flex } from '@chakra-ui/react';
+
+import { Box, Container, Stack, Text, Link, Image, IconButton, HStack, Flex } from '@chakra-ui/react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
 const Footer = () => {

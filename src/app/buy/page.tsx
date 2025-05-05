@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import {
-  Box, Button, Container, Flex, Grid, Heading, HStack, Icon,
-  Image, Input, InputGroup, InputLeftElement, Select, SimpleGrid, Tag,
+  Box, Button, Container, Flex, Heading, HStack, Icon,
+  Image, Input, InputGroup, InputLeftElement, Select, SimpleGrid,
   Text, VStack, useDisclosure, Modal, ModalOverlay, ModalContent,
   ModalHeader, ModalBody, ModalCloseButton, Avatar, AvatarBadge, Badge,
-  Divider, Stack, RangeSlider, RangeSliderTrack, IconButton,
+  Divider, RangeSlider, RangeSliderTrack, IconButton,
   RangeSliderFilledTrack, RangeSliderThumb, Stat, StatLabel, StatNumber
 } from "@chakra-ui/react";
 import { SearchIcon, RepeatIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { FaBed, FaBath, FaRulerCombined, FaMapMarkerAlt, FaHeart, FaPhone, FaWhatsapp, FaEnvelope } from "react-icons/fa";
+import { FaBed, FaBath, FaMapMarkerAlt,FaWhatsapp} from "react-icons/fa";
 import { GiHouseKeys } from "react-icons/gi";
-import { BsHouseCheck, BsLightningCharge } from "react-icons/bs";
+import { BsLightningCharge } from "react-icons/bs";
 import { FiFilter } from "react-icons/fi";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -164,7 +164,6 @@ const BuyPropertyPage = () => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const propertyTypes = ['Penthouse', 'Duplex', 'Terrace', 'Estate Home', 'Bungalow'];
-  const bedroomOptions = ['Any', '2+', '3+', '4+', '5+'];
   const locationOptions = ['Lekki', 'Ikoyi', 'Victoria Island', 'Abuja', 'Port Harcourt'];
   
   // Image slider functions
@@ -198,7 +197,7 @@ const BuyPropertyPage = () => {
 
   const openPropertyModal = (property: Property) => {
     setSelectedProperty(property);
-    setCurrentImageIndex(0); // Reset image index when opening modal
+    setCurrentImageIndex(0); 
     onOpen();
   };
 

@@ -1,12 +1,9 @@
 "use client";
-// import { ToastContainer ,Zoom} from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
 import React from "react";
-// import { QueryClient, QueryClientProvider } from "react-query";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 
-// const queryClient = new QueryClient();
+
 
 const averta = {
   fontFamily: "Averta",

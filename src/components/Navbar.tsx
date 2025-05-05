@@ -68,7 +68,7 @@ import {
   
   const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
-    const [isNavbarTransparent, setIsNavbarTransparent] = useState(true);
+    const [, setIsNavbarTransparent] = useState(true);
     const pathname = usePathname();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const btnRef = useRef<HTMLButtonElement>(null);

@@ -1,13 +1,11 @@
 'use client'
-import { Box, Flex, Container, SlideFade, useColorModeValue, Text, Heading, Button, VStack } from "@chakra-ui/react";
+import { Box,Container, SlideFade, useColorModeValue, Text, Heading, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import StatsSection from "./AnimationCounter";
-import Navbar from "./Navbar";
 import { colors } from "@/utils/color";
 
 const Header = () => {
-  const [isVisible, setIsVisible] = useState(true);
-  const primaryColor = useColorModeValue("purple.500", "teal.300");
+  const [isVisible] = useState(true);
   const bgColor = useColorModeValue("purple.50", "purple.800");
   const textColor = useColorModeValue("gray.700", "gray.100");
   
