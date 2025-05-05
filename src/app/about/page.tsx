@@ -35,7 +35,7 @@ const AboutUsPage = () => {
                 About The Agent Ng
               </Heading>
               <Text fontSize="xl" mb={8}>
-                Nigeria's premier network of professional real estate agents, dedicated to connecting property seekers with their perfect homes since 2020.
+                Nigeria&apos;s premier network of professional real estate agents, dedicated to connecting property seekers with their perfect homes since 2020.
               </Text>
               <HStack spacing={4}>
                 <Button 
@@ -84,7 +84,7 @@ const AboutUsPage = () => {
             </GridItem>
             <GridItem order={{ base: 1, lg: 2 }}>
               <Text color={primaryColor} fontWeight="bold" mb={2}>OUR STORY</Text>
-              <Heading as="h2" size="xl" mb={6}>From Vision to Nigeria's Leading Real Estate Network</Heading>
+              <Heading as="h2" size="xl" mb={6}>From Vision to Nigeria&apos;s Leading Real Estate Network</Heading>
               <Text fontSize="lg" color="gray.600" mb={4}>
                 Founded in 2020, TheAgent began with a simple yet powerful vision: to transform the Nigerian real estate market by building a transparent, trustworthy network of professional agents.
               </Text>
@@ -180,7 +180,7 @@ const AboutUsPage = () => {
             <Text color={primaryColor} fontWeight="bold">THE PEOPLE</Text>
             <Heading as="h2" size="xl">Our Leadership Team</Heading>
             <Text fontSize="lg" maxW="800px" color="gray.600">
-              Meet the dedicated professionals behind TheAgent's success
+              Meet the dedicated professionals behind TheAgent&apos;s success
             </Text>
           </VStack>
 
@@ -252,9 +252,9 @@ const AboutUsPage = () => {
         <Container maxW="1200px">
           <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={10} alignItems="center">
             <GridItem>
-              <Heading as="h2" size="xl" mb={4}>Join Nigeria's Fastest Growing Real Estate Network</Heading>
+              <Heading as="h2" size="xl" mb={4}>Join Nigeria&apos;s Fastest Growing Real Estate Network</Heading>
               <Text fontSize="lg" color="gray.600" mb={6}>
-                Whether you're an experienced agent or just starting your real estate career, TheAgent provides the platform, tools, and community to help you succeed.
+                Whether you&apos;re an experienced agent or just starting your real estate career, TheAgent provides the platform, tools, and community to help you succeed.
               </Text>
               <Button 
                 bg={primaryColor} 

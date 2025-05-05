@@ -47,23 +47,10 @@ const theme = extendTheme({
 });
 function Providers({ children }: React.PropsWithChildren): React.JSX.Element {
   return (
-    // <QueryClientProvider client={queryClient}>
-  
       <ChakraProvider theme={theme}>
-        {children}
-        {/* <ToastContainer
-          progressClassName="toastProgress"
-          className="toastBody"
-          transition={Zoom}
-          icon={false}
-          autoClose={3000}
-          hideProgressBar={true}
-          position={"top-center"}
-          toastClassName="custom-toast"
-          closeButton={false}
-        /> */}
+        {children}  
       </ChakraProvider>
-    // </QueryClientProvider>
+
   );
 }
 

@@ -8,7 +8,6 @@ import {
   Button, 
   Flex,
   Stack,
-  SlideFade,
   useColorModeValue
 } from '@chakra-ui/react';
 import { BiHome, BiMapPin } from 'react-icons/bi';
@@ -17,8 +16,8 @@ import Navbar from './Navbar';
 import { colors } from '@/utils/color';
 
 
+
 const Hero = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
   
   const features = [
@@ -28,14 +27,15 @@ const Hero = () => {
   ];
   
   useEffect(() => {
-    setIsVisible(true);
     
     const interval = setInterval(() => {
       setActiveFeature(prev => (prev + 1) % features.length);
     }, 3000);
     
     return () => clearInterval(interval);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeFeature]);
+  
   
   const overlayColor = useColorModeValue('rgba(0,0,0,0.65)', 'rgba(0,0,0,0.75)');
   const primaryColor = useColorModeValue(colors.primary, 'teal.300');
@@ -69,7 +69,7 @@ const Hero = () => {
 
         <Flex direction={{ base: 'column', lg: 'row' }} align="center" justify="space-between" mt={'18%'}>
           <Stack spacing={6} maxW={{ base: "100%", lg: "60%" }} textAlign={{ base: "center", lg: "left" }}>    
-            <SlideFade in={isVisible} offsetY="30px" delay={0.4}>
+            <Box>
               <Heading 
                 as="h1" 
                 size="2xl" 
@@ -82,11 +82,11 @@ const Hero = () => {
                   the easy way.
                 </Box>
               </Heading>
-            </SlideFade>
+            </Box>
             
        
             
-            <SlideFade in={isVisible} offsetY="30px" delay={1}>
+            <Box>
               <Flex 
                 mt={2} 
                 align="center" 
@@ -116,9 +116,9 @@ const Hero = () => {
                   </Flex>
                 ))}
               </Flex>
-            </SlideFade>
+            </Box>
             
-            <SlideFade in={isVisible} offsetY="30px" delay={1.2}>
+            <Box>
               <Stack direction={{ base: "column", md: "row" }} spacing={4} mt={4}>
                 <Button 
                   size="lg" 
@@ -147,7 +147,7 @@ const Hero = () => {
                   Get Started
                 </Button>
               </Stack>
-            </SlideFade>
+            </Box>
           </Stack>
           
         </Flex>

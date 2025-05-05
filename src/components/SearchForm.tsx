@@ -57,7 +57,7 @@ const SearchForm = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     try {
       const response = await fetch("/api/search", {
         method: "POST",
@@ -66,19 +66,18 @@ const SearchForm = () => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         toast({
           title: "Request submitted successfully!",
-          description:
-            "We'll get back to you within a week with property matches.",
+          description: "We'll get back to you within a week with property matches.",
           status: "success",
           duration: 5000,
           isClosable: true,
         });
-
+  
         // Reset form
         setFormData({
           state: "",
@@ -97,10 +96,11 @@ const SearchForm = () => {
       } else {
         throw new Error(data.message || "Something went wrong");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
       toast({
         title: "Error submitting request",
-        description: error.message,
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -118,7 +118,7 @@ const SearchForm = () => {
             Submit a Search Request
           </Heading>
           <Text>
-            Tell us what you're looking for and we'll connect you with the right
+            Tell us what you&apos;re looking for and we&apos;ll connect you with the right
             agents.
           </Text>
         </VStack>

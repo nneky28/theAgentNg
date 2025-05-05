@@ -52,7 +52,7 @@ const Header = () => {
               color={textColor}
               mt={2}
             >
-              Nigeria's largest network of real estate agents.
+              Nigeria&apos;s largest network of real estate agents.
             </Text>
           </SlideFade>
             <Text 

@@ -554,7 +554,6 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ property, onClick }: PropertyCardProps) => {
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   const formatPrice = (price: number): string => {
     if (price >= 100000000) {

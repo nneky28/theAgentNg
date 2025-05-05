@@ -1,17 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { 
-  Flex, 
-  Box, 
-  Text, 
-  SlideFade,
-  useBreakpointValue
-} from '@chakra-ui/react';
-import { motion, useAnimation, useInView } from 'framer-motion';
-import { keyframes } from '@emotion/react';
+import { Flex, Box, Text, useBreakpointValue } from '@chakra-ui/react';
+import { motion, useInView } from 'framer-motion';
 import { colors } from '@/utils/color';
-
-
-
 
 const counterVariants = {
   initial: { opacity: 0, y: 20 },
@@ -49,7 +39,6 @@ const digitVariants = {
 
 const AnimatedCounter = ({ from = 0, to, duration = 1.5 }: { from?: number; to: string; duration?: number }) => {
   const [count, setCount] = useState<number>(from);
-  const controls = useAnimation();
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "0px 0px -50px 0px" });
   
@@ -60,9 +49,9 @@ const AnimatedCounter = ({ from = 0, to, duration = 1.5 }: { from?: number; to: 
   useEffect(() => {
     if (!isInView) return;
     
-    let startValue = from;
-    let endValue = parseInt(to.replace(/,/g, ''));
-    let range = endValue - startValue;
+    const startValue = from;
+    const endValue = parseInt(to.replace(/,/g, ''));
+    const range = endValue - startValue;
     
     const easeOutQuad = (t: number) => t * (2 - t);
     
@@ -82,12 +71,11 @@ const AnimatedCounter = ({ from = 0, to, duration = 1.5 }: { from?: number; to: 
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(animateCount);
       } else {
-        // When count completes, wait a moment then restart
         restartTimeout = setTimeout(() => {
           setCount(from);
           startTime = 0;
           animationFrameId = requestAnimationFrame(animateCount);
-        }, 1000); // Pause for 1 second before restarting
+        }, 1000);
       }
     };
     
@@ -113,11 +101,7 @@ const AnimatedCounter = ({ from = 0, to, duration = 1.5 }: { from?: number; to: 
       animate={isInView ? "animate" : "initial"}
       variants={counterVariants}
     >
-      <Flex 
-        justify="center"
-        align="flex-end"
-        lineHeight="1"
-      >
+      <Flex justify="center" align="flex-end" lineHeight="1">
         {formattedValue.split('').map((char, i) => (
           <motion.span
             key={i}
@@ -166,22 +150,15 @@ const AnimatedCounter = ({ from = 0, to, duration = 1.5 }: { from?: number; to: 
   );
 };
 
-const glow = keyframes`
-  0% { text-shadow: 0 0 5px rgba(192, 132, 252, 0.8); }
-  50% { text-shadow: 0 0 20px rgba(192, 132, 252, 0.8), 0 0 30px rgba(192, 132, 252, 0.6); }
-  100% { text-shadow: 0 0 5px rgba(192, 132, 252, 0.8); }
-`;
-
 const StatsSection = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const controls = useAnimation();
+  const [, setIsVisible] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "0px 0px -100px 0px" });
   
   const stats = [
-      { number: "500", label: "Active Agents" },
-      { number: "60", label: "Cities Covered" },
-      { number: "2,500", label: "Listed Properties" }
+    { number: "500", label: "Active Agents" },
+    { number: "60", label: "Cities Covered" },
+    { number: "2,500", label: "Listed Properties" }
   ];
   
   const responsivePadding = useBreakpointValue({ base: 4, md: 8 });
@@ -190,17 +167,11 @@ const StatsSection = () => {
   useEffect(() => {
     if (isInView) {
       setIsVisible(true);
-      controls.start("visible");
     }
-  }, [isInView, controls]);
+  }, [isInView]);
   
   return (
-    <Box 
-      ref={ref}
-      w="full"
-      py={12}
-      mb={12}
-    >
+    <Box ref={ref} w="full" py={12} mb={12}>
       <Flex 
         w="full" 
         justify="center" 
@@ -210,43 +181,31 @@ const StatsSection = () => {
         fontWeight={800}
       >
         {stats.map((stat, index) => (
-          <SlideFade 
-            key={index} 
-            in={isVisible} 
-            offsetY="40px" 
-            transition={{ 
-              enter: { 
-                duration: 0.6, 
-                delay: index * 0.15,
-                ease: [0.22, 1, 0.36, 1]
-              } 
-            }}
+          <Box 
+            key={index}
+            textAlign="center" 
+            px={responsivePadding} 
+            borderRight={index < 2 ? responsiveBorder : "none"} 
+            borderColor={colors.primary}
+            pb={{ base: 0, md: 0 }}
+            as={motion.div}
+            whileHover={{ scale: 1.05 }}
           >
-            <Box 
-              textAlign="center" 
-              px={responsivePadding} 
-              borderRight={index < 2 ? responsiveBorder : "none"} 
-              borderColor={colors.primary}
-              pb={{ base: 0, md: 0 }}
-              as={motion.div}
-              whileHover={{ scale: 1.05 }}
+            <AnimatedCounter 
+              from={0} 
+              to={stat.number} 
+              duration={1.8 + index * 0.3} 
+            />
+            <Text 
+              fontSize={{ base: "md", md: "xl" }}
+              color={colors.textColor}
+              fontWeight="800"
+              mt={2}
+              letterSpacing="wide"
             >
-              <AnimatedCounter 
-                from={0} 
-                to={stat.number} 
-                duration={1.8 + index * 0.3} 
-              />
-              <Text 
-                fontSize={{ base: "md", md: "xl" }}
-                color={colors.textColor}
-                fontWeight="800"
-                mt={2}
-                letterSpacing="wide"
-              >
-                {stat.label}
-              </Text>
-            </Box>
-          </SlideFade>
+              {stat.label}
+            </Text>
+          </Box>
         ))}
       </Flex>
     </Box>

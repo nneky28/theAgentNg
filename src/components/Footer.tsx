@@ -13,7 +13,7 @@ const Footer = () => {
               <Image src="/images/L1.png" alt="TheAgent Logo" w="60px" />
             </Box>
             <Text fontSize="sm" maxW={'400px'}>
-              Nigeria's latest network of real estate agents. Our mission is to help you find the right property, the easy way.
+              Nigeria&apos;s latest network of real estate agents. Our mission is to help you find the right property, the easy way.
             </Text>
             <HStack spacing={2}>
               <IconButton 

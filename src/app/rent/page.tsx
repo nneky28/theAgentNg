@@ -622,7 +622,7 @@ const PropertiesForSalePage = () => {
             </HStack>
             <Text fontSize="xl">
               Find your dream home from our selection of premium properties
-              across Nigeria's best locations
+              across Nigeria&apos;s best locations
             </Text>
 
             <Box w="100%" maxW="800px">
