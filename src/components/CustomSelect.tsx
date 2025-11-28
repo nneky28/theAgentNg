@@ -69,7 +69,7 @@ const CustomSelectField: React.FunctionComponent<CustomSelectFieldProps> = ({
   placement,
   dataTestId,
 }) => {
-  const [selected, setSelected] = useState<string | undefined>(undefined);
+  const [, setSelected] = useState<string | undefined>(undefined);
   const [searchedResults, setSearchedResults] = useState<MenuItem[] | undefined>(
     undefined
   );

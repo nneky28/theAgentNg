@@ -33,7 +33,7 @@ const Hero = () => {
     }, 3000);
     
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [activeFeature]);
   
   const primaryColor = useColorModeValue(colors.primary, 'teal.300');

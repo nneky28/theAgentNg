@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { createClient } from '@/utils/supabase/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+
+
 
 
 export async function POST(request: NextRequest) {
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
         console.log(`Uploading image ${i + 1}/${images.length}: ${fileName}`);
         
         // Upload to Supabase Storage with auth token
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const {  error: uploadError } = await supabase.storage
           .from('property-images')
           .upload(fileName, buffer, {
             contentType: image.type,

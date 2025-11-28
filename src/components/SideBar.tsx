@@ -10,7 +10,6 @@ import {
   HStack,
   Spinner,
   Center,
-  Badge,
 } from "@chakra-ui/react";
 import { RxDashboard } from "react-icons/rx";
 import { colors } from "@/utils/color";
@@ -40,7 +39,7 @@ const Sidebar = ({
   active,
   sidebarItems,
   onSetActive,
-  userImage,
+ 
 }: SidebarProps) => {
   const toast = useToast();
   const router = useRouter();
@@ -82,7 +81,7 @@ const Sidebar = ({
         cities?: string[];
       };
 
-      const { data: dbData, error: dbError } = await supabase
+      const { data: dbData} = await supabase
         .from("users")
         .select("username, whatsapp_no, state, cities")
         .eq("id", user.id)

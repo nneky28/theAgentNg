@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import TopBar from "@/components/TopBar";
 import Sidebar from "@/components/SideBar";
 import { createClient } from "@/utils/supabase/client";
-import { RealtimeVisualization } from "@/components/RealtimeWidget";
+
 
 interface SidebarItem {
   label: string;

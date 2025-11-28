@@ -245,6 +245,7 @@ export default function AdminLayout({
       });
       router.push("/");
     } catch (error) {
+      console.error("Error logging out:", error);
       toast({
         title: "Error logging out",
         status: "error",

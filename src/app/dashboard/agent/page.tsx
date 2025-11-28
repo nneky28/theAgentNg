@@ -1,4 +1,3 @@
-
 // @ts-nocheck
 'use client'
 
@@ -22,7 +21,7 @@ import {
   VStack,
   Icon,
 } from '@chakra-ui/react';
-import { FiPlus, FiBell, FiHome } from 'react-icons/fi';
+import { FiPlus, FiBell, FiHome, FiEdit, FiTrash2 } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -194,6 +193,41 @@ const AgentDashboard = () => {
       });
     }
   }, [userEmail, toast, onPropertyClose]);
+
+  const handleDeleteProperty = async (propertyId: string) => {
+    const supabase = createClient();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .delete()
+        .eq('id', propertyId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Deleted!",
+        description: "Property has been deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      await fetchProperties(userEmail);
+    } catch (error) {
+      console.error('Error deleting property:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete property.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (isCheckingAuth) {
     return (
@@ -378,6 +412,28 @@ const AgentDashboard = () => {
                       property={property}
                       onEdit={(property) => console.log('Edit property:', property)}
                       onView={(property) => console.log('View property:', property)}
+                      actions={
+                        <Flex gap={2}>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            colorScheme="purple"
+                            leftIcon={<FiEdit />}
+                            onClick={() => console.log('Edit property:', property)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            colorScheme="red"
+                            leftIcon={<FiTrash2 />}
+                            onClick={() => handleDeleteProperty(property.id)}
+                          >
+                            Delete
+                          </Button>
+                        </Flex>
+                      }
                     />
                   ))}
                 </SimpleGrid>

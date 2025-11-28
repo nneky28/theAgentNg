@@ -2,7 +2,7 @@
 'use client'
 import { Box, Container, Heading, Text, Button, VStack, HStack, useToast } from '@chakra-ui/react';
 import { FcGoogle } from 'react-icons/fc';
-import { signIn, useSession } from 'next-auth/react';
+import {  useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { colors } from '../utils/color';

@@ -7,7 +7,6 @@ import {
   Heading,
   VStack,
   Text,
-  Badge,
   Flex,
   Spinner,
   Card,
@@ -15,7 +14,6 @@ import {
   Icon,
   HStack,
   Button,
-  Divider,
 } from "@chakra-ui/react";
 import { FiBell, FiCheck } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
@@ -138,9 +136,8 @@ export default function NotificationsPage() {
                           </VStack>
                         </Box>
                       )}
-                      {notification.request_data.budget && (
+                      
                       <Text fontSize={'sm'} color="gray.500">If you have a property matching this description, kindly send pictures/videos to the client via WhatsApp.</Text>
-                      )}
                       <Text fontSize="xs" color="gray.500">
                         {new Date(notification.created_at).toLocaleString()}
                       </Text>

@@ -31,6 +31,8 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { EditIcon, AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { FiTrash2 } from 'react-icons/fi';
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Property {
   id: string;
@@ -50,17 +52,21 @@ interface PropertyCardProps {
   property: Property;
   onEdit?: (property: Property) => Promise<void> | void;
   onView?: (property: Property) => void;
+  onDelete?: (propertyId: string) => void; 
 }
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({
   property,
   onView,
   onEdit,
+  onDelete, 
 }) => {
   const bgColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.600', 'gray.400');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   
   const getFirstImage = (p: Property) => {
@@ -178,6 +184,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     if (onView) onView(property);
   };
 
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    if (onDelete) await onDelete(property.id);
+    setIsDeleting(false);
+    setConfirmOpen(false);
+  };
+
   return (
     <Card
       variant="outline"
@@ -187,18 +200,28 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       onClick={handleCardClick}
       position="relative"
     >
-      <Tooltip label="Edit property" hasArrow>
-        <IconButton
-          aria-label="Edit property"
-          icon={<EditIcon />}
-          size="sm"
-          position="absolute"
-          top="8px"
-          right="8px"
-          zIndex={2}
-          onClick={openEdit}
-        />
-      </Tooltip>
+      <Flex position="absolute" top="8px" right="8px" zIndex={2} gap={2}>
+        <Tooltip label="Edit property" hasArrow>
+          <IconButton
+            aria-label="Edit property"
+            icon={<EditIcon />}
+            size="sm"
+            onClick={openEdit}
+          />
+        </Tooltip>
+        <Tooltip label="Delete property" hasArrow>
+          <IconButton
+            aria-label="Delete property"
+            icon={<FiTrash2 />}
+            size="sm"
+            colorScheme="red"
+            onClick={(e) => {
+              e.stopPropagation();
+              setConfirmOpen(true);
+            }}
+          />
+        </Tooltip>
+      </Flex>
 
       <Image
         src={imgSrc}
@@ -376,6 +399,18 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Property"
+        description="Are you sure you want to delete this property? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        isLoading={isDeleting}
+      />
     </Card>
   );
 };

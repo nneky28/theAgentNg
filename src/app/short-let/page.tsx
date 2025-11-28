@@ -3,6 +3,7 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import SearchForm from "@/components/SearchForm";
+import PropertyCard from "@/components/PropertyCard";
 import { Property } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 import { SearchIcon } from "@chakra-ui/icons";
@@ -19,33 +20,17 @@ import {
   Input,
   Flex,
   Spinner,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { TbHomeSearch } from "react-icons/tb";
 
 
-interface Filters {
-  priceRange: [number, number];
-  type: string;
-  beds: string;
-  state: string;
-  city: string;
-  searchTerm: string;
-  location: string;
-}
+
 const ShortLetPage = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<Filters>({
-    priceRange: [0, 500000000],
-    type: "",
-    beds: "",
-    state: "",
-    city: "",
-    searchTerm: "",
-    location: "",
-  });
-  const [sortOption, setSortOption] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchProperties();
@@ -76,17 +61,23 @@ const ShortLetPage = () => {
       setLoading(false);
     }
   };
-  const propertyTypes = useMemo(
-    () => Array.from(new Set(properties.map((p) => p.type))),
-    [properties]
-  );
 
-  const parsePrice = (price: string | number) => {
-    if (typeof price === 'number') return price;
-    const numericPrice = price.replace(/[₦,NGN\s]/g, '');
-    return parseFloat(numericPrice) || 0;
-  };
-    
+
+  // Filter properties by search term
+  const filteredProperties = properties.filter((property) => {
+    if (typeof property.location === "string") {
+      return property.location.toLowerCase().includes(searchTerm.toLowerCase());
+    } else if (
+      property.location &&
+      typeof property.location === "object"
+    ) {
+      const { city, state, country } = property.location;
+      const locationString = [city, state, country].filter(Boolean).join(" ").toLowerCase();
+      return locationString.includes(searchTerm.toLowerCase());
+    }
+    return false;
+  });
+
   if (loading) {
     return (
       <Box bg="gray.50" minH="100vh">
@@ -151,6 +142,8 @@ const ShortLetPage = () => {
                   color="gray.800"
                   placeholder="Search by location (e.g. Lekki, Ikoyi, Abuja)..."
                   borderRadius="lg"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </InputGroup>
             </Box>
@@ -166,13 +159,25 @@ const ShortLetPage = () => {
         textAlign="center"
         py={12}
       >
-        <Heading as="h3" size="md" mb={4}>
-          No Short Let Apartment Found
-        </Heading>
-        <Text color="gray.600">
-          When available, we will be adding more short let apartments to our
-          platform.
-        </Text>
+        {filteredProperties.length === 0 ? (
+          <>
+            <Heading as="h3" size="md" mb={4}>
+              No Short Let Apartment Found
+            </Heading>
+            <Text color="gray.600">
+              When available, we will be adding more short let apartments to our
+              platform.
+            </Text>
+          </>
+        ) : (
+          <Container maxW="container.xl" py={8}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+              {filteredProperties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </SimpleGrid>
+          </Container>
+        )}
       </Box>
 
       <SearchForm />

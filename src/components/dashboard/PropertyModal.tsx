@@ -215,6 +215,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
   const mutation = useMutation({
     mutationFn: createProperty,
     onSuccess: (data) => {
+      console.log('Property added successfully!', data);
       toast({
         title: 'Property added successfully!',
         status: 'success',
