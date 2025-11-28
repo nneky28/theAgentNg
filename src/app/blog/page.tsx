@@ -19,6 +19,7 @@ import {
   useColorModeValue,
   Avatar,
   SimpleGrid,
+  VStack,
 } from '@chakra-ui/react';
 import { SearchIcon } from '@chakra-ui/icons';
 import {
@@ -126,26 +127,48 @@ const RealEstateBlog: React.FC = () => {
   const secondaryTextColor = useColorModeValue('gray.600', 'gray.400');
 
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
-      {/* Hero Section */}
-      <Box bgGradient="linear(to-r, purple.700, purple.500)" color="white" py={6} h={'60vh'}>
-        <Navbar />
-        <Container maxW="container.xl" textAlign="center"  pt={['40%',"15%"]}>
+   <Box bg="gray.50">
+     <Navbar />
+      <Box 
+        backgroundImage="url('/images/spaces.png')"
+        position="relative"
+        overflow="hidden"
+        backgroundSize="cover"
+        backgroundPosition="center"
+        backgroundRepeat="no-repeat"
+        bgColor="#00425F"
+        color={'white'}
+        h="600px"
+         _before={{
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bg: "black",
+          opacity: 0.6,
+          zIndex: 0,
+        }}>
+       
+        <Container 
+        maxW="container.xl"
+          py={16}
+          display="flex"
+          flexDirection="column"
+          justifyContent="flex-end"
+          h="full"
+          position="relative"
+          zIndex={1}
+         >
+        <VStack spacing={2} textAlign="center" color="white">
           <Heading as="h1" size={['xl',"2xl"]} mb={4}>
             Balanced Living Through Mindful Spaces
           </Heading>
           <Text fontSize="xl" maxW="3xl" mx="auto" mb={8} color="purple.100">
-            Profesional insights and inspirations from expert agents.
+            Profesional insights from expert agents.
           </Text>
-          <Flex
-            bg={cardBg}
-            rounded="lg"
-            p={2}
-            maxW="xl"
-            mx="auto"
-            alignItems="center"
-            boxShadow="lg"
-          >
+              <Box w="100%" maxW="800px">
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <SearchIcon color="gray.400" />
@@ -155,13 +178,15 @@ const RealEstateBlog: React.FC = () => {
                 placeholder="Search articles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                border="none"
+                bg="white"
+                  color="gray.800"
                 _focus={{ outline: 'none' }}
-                color={textColor}
+             
               />
             </InputGroup>
            
-          </Flex>
+          </Box>
+          </VStack>
         </Container>
       </Box>
 

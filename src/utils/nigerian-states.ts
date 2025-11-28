@@ -12,7 +12,8 @@ export interface NigerianState {
         'Ikeja', 'Victoria Island', 'Lekki', 'Ajah', 'Ikoyi', 'Surulere', 'Yaba',
         'Gbagada', 'Apapa', 'Festac', 'Ikorodu', 'Epe', 'Badagry', 'Ojo', 'Alimosho',
         'Magodo', 'Ojodu', 'Maryland', 'Ogudu', 'Ilupeju', 'Mushin', 'Agege', 'Ikotun',
-        'Isolo', 'Oshodi', 'Ajegunle', 'Ago', 'Okota', 'Ipaja', 'Egbeda'
+        'Isolo', 'Oshodi', 'Ajegunle', 'Ago', 'Okota', 'Ipaja', 'Egbeda', 'Abule Egba',
+
       ]
     },
     {

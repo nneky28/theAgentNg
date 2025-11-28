@@ -17,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 import { FiBell, FiCheck } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
+import { colors } from "@/utils/color";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
@@ -110,9 +111,9 @@ export default function NotificationsPage() {
           {notifications.map((notification: any) => (
             <Card
               key={notification.id}
-              bg={notification.is_read ? "white" : "purple.50"}
+              bg={notification.is_read ? "white" : 'purple.50'}
               borderLeft="4px"
-              borderColor={notification.is_read ? "gray.200" : "purple.500"}
+              borderColor={notification.is_read ? "gray.200" : colors.primary}
             >
               <CardBody>
                 <Flex justify="space-between" align="start">
@@ -120,7 +121,7 @@ export default function NotificationsPage() {
                     <Icon
                       as={FiBell}
                       boxSize={6}
-                      color={notification.is_read ? "gray.400" : "purple.500"}
+                      color={notification.is_read ? "gray.400" : colors.primary}
                     />
                     <VStack align="start" spacing={2} flex={1}>
                       <Heading size="sm">{notification.title}</Heading>
@@ -136,8 +137,12 @@ export default function NotificationsPage() {
                           </VStack>
                         </Box>
                       )}
-                      
-                      <Text fontSize={'sm'} color="gray.500">If you have a property matching this description, kindly send pictures/videos to the client via WhatsApp.</Text>
+                                            
+                      {
+                        notification.request_data.budget && (
+                          <Text fontSize={'sm'} color="gray.500">If you have a property matching this description, kindly send pictures/videos to the client via WhatsApp.</Text>
+                        )
+                      }
                       <Text fontSize="xs" color="gray.500">
                         {new Date(notification.created_at).toLocaleString()}
                       </Text>

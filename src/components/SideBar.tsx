@@ -43,7 +43,7 @@ const Sidebar = ({
 }: SidebarProps) => {
   const toast = useToast();
   const router = useRouter();
-  const accentColor = "#724B9B";
+  const accentColor = colors.primary;
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

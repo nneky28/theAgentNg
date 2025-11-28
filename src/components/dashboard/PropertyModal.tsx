@@ -1,5 +1,5 @@
 // @ts-nocheck
-'use client'
+"use client";
 import {
   Modal,
   ModalOverlay,
@@ -32,38 +32,38 @@ import {
   Badge,
   CloseButton,
   Progress,
-} from '@chakra-ui/react';
-import { FiCamera, FiX } from 'react-icons/fi';
-import { useState, useEffect } from 'react';
-import { CATEGORY_OPTIONS, PROPERTY_TYPES } from '@/constants/propertyOptions';
-import CustomSelectField from '../CustomSelect';
-import Image from 'next/image';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createClient } from '@/utils/supabase/client';
+} from "@chakra-ui/react";
+import { FiCamera, FiX } from "react-icons/fi";
+import { useState, useEffect } from "react";
+import { CATEGORY_OPTIONS, PROPERTY_TYPES } from "@/constants/propertyOptions";
+import CustomSelectField from "../CustomSelect";
+import Image from "next/image";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createClient } from "@/utils/supabase/client";
 
 const PROPERTY_FEATURES = [
-  'Smart Home System',
-  'Balcony',
-  'Built-in Wardrobes',
-  'CCTV',
-  'Chandelier',
-  'Ample Outdoor Space',
-  'Electricity',
-  'Ensuite',
-  'Panoramic Views',
-  'Fully Furnished',
-  'Private Garden',
-  'Staff Quarters',
-  'Gym',
-  'Kitchen Cabinets',
-  'Laundry Room',
-  'Parking Space',
-  'Pop Ceiling',
-  '24/7 Security',
-  'Swimming Pool',
-  'Modern Amenities',
-  'Water Heater',
-  'Wi-Fi',
+  "Smart Home",
+  "Balcony",
+  "Wardrobes",
+  "CCTV",
+  "Chandelier",
+  "Outdoor Space",
+  "Electricity",
+  "Ensuite",
+  "Panoramic Views",
+  "Fully Furnished",
+  "Private Garden",
+  "Staff Quarters",
+  "Gym",
+  "Kitchen Cabinets",
+  "Laundry Room",
+  "Parking Space",
+  "Pop Ceiling",
+  "24/7 Security",
+  "Swimming Pool",
+  "Modern Amenities",
+  "Water Heater",
+  "Wi-Fi",
 ];
 
 const MIN_IMAGES = 5;
@@ -83,6 +83,7 @@ interface PropertyFormData {
   images: File[];
   state: string;
   city: string;
+  capacity?: string; // <-- Add this line
 }
 
 interface PropertyModalProps {
@@ -96,26 +97,26 @@ const uploadImages = async (files: File[], userId: string) => {
   const supabase = createClient();
   const imageUrls: string[] = [];
 
-  console.log('🚀 Starting upload for', files.length, 'images');
-  console.log('👤 User ID:', userId);
+  console.log("🚀 Starting upload for", files.length, "images");
+  console.log("👤 User ID:", userId);
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const fileName = `${userId}/${Date.now()}_${i}.${fileExt}`;
 
     console.log(`📤 Uploading image ${i + 1}/${files.length}:`, fileName);
 
     const { data, error } = await supabase.storage
-      .from('property-images')
+      .from("property-images")
       .upload(fileName, file, {
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: false,
       });
 
     if (error) {
       console.error(`❌ Upload failed for image ${i + 1}:`, error);
-      console.error('Error details:', {
+      console.error("Error details:", {
         message: error.message,
         statusCode: error,
         error: error,
@@ -126,14 +127,14 @@ const uploadImages = async (files: File[], userId: string) => {
     console.log(`✅ Image ${i + 1} uploaded successfully:`, data.path);
 
     // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('property-images')
-      .getPublicUrl(fileName);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("property-images").getPublicUrl(fileName);
 
     imageUrls.push(publicUrl);
   }
 
-  console.log('🎉 All images uploaded successfully!');
+  console.log("🎉 All images uploaded successfully!");
   return imageUrls;
 };
 
@@ -142,10 +143,13 @@ const createProperty = async (data: any) => {
   const supabase = createClient();
 
   // First check authentication
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
   if (authError || !user) {
-    throw new Error('You must be logged in to create properties');
+    throw new Error("You must be logged in to create properties");
   }
 
   // Upload images first
@@ -153,7 +157,7 @@ const createProperty = async (data: any) => {
 
   // Insert property
   const { data: propertyData, error: dbError } = await supabase
-    .from('properties')
+    .from("properties")
     .insert([
       {
         title: data.title,
@@ -170,8 +174,9 @@ const createProperty = async (data: any) => {
         city: data.city,
         owner_email: user.email,
         owner_id: user.id,
-        status: 'active',
+        status: "active",
         views: 0,
+        capacity: data.capacity || null, // <-- Add this line
       },
     ])
     .select()
@@ -189,71 +194,73 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const accentColor = '#724B9B';
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const accentColor = "#724B9B";
   const toast = useToast();
   const queryClient = useQueryClient();
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const [formData, setFormData] = useState<PropertyFormData>({
-    title: '',
-    address: '',
+    title: "",
+    address: "",
     price: 0,
     bedrooms: 0,
     bathrooms: 0,
     sqft: 0,
-    propertyType: '',
-    category: '',
-    description: '',
+    propertyType: "",
+    category: "",
+    description: "",
     features: [],
     images: [],
-    state: '',
-    city: '',
+    state: "",
+    city: "",
+    capacity: "", // <-- Add this line
   });
 
   // React Query mutation
   const mutation = useMutation({
     mutationFn: createProperty,
     onSuccess: (data) => {
-      console.log('Property added successfully!', data);
+      console.log("Property added successfully!", data);
       toast({
-        title: 'Property added successfully!',
-        status: 'success',
+        title: "Property added successfully!",
+        status: "success",
         duration: 3000,
         isClosable: true,
       });
 
-      queryClient.invalidateQueries({ queryKey: ['properties'] });
+      queryClient.invalidateQueries({ queryKey: ["properties"] });
 
       onSubmit?.(formData);
-      
+
       // Reset form
       setFormData({
-        title: '',
-        address: '',
+        title: "",
+        address: "",
         price: 0,
         bedrooms: 0,
         bathrooms: 0,
         sqft: 0,
-        propertyType: '',
-        category: '',
-        description: '',
+        propertyType: "",
+        category: "",
+        description: "",
         features: [],
         images: [],
-        state: '',
-        city: '',
+        state: "",
+        city: "",
+        capacity: "", // <-- Add this line
       });
       setUploadProgress(0);
-      
+
       onClose();
     },
     onError: (error: any) => {
-      console.error('Submission error:', error);
-      
+      console.error("Submission error:", error);
+
       toast({
-        title: 'Error uploading property',
-        description: error.message || 'Failed to create property',
-        status: 'error',
+        title: "Error uploading property",
+        description: error.message || "Failed to create property",
+        status: "error",
         duration: 6000,
         isClosable: true,
       });
@@ -261,29 +268,33 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     },
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+    setFormData((prev) => ({ ...prev, [name]: parseFloat(value) || 0 }));
   };
 
   const handleFeatureChange = (selectedFeatures: string[]) => {
-    setFormData(prev => ({ ...prev, features: selectedFeatures }));
+    setFormData((prev) => ({ ...prev, features: selectedFeatures }));
   };
 
   const removeFeature = (featureToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      features: prev.features.filter(feature => feature !== featureToRemove),
+      features: prev.features.filter((feature) => feature !== featureToRemove),
     }));
   };
 
   const removeImage = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
@@ -296,23 +307,29 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     if (totalImages > MAX_IMAGES) {
       toast({
         title: `Maximum ${MAX_IMAGES} images allowed`,
-        status: 'warning',
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
       return;
     }
-    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
+    setFormData((prev) => ({ ...prev, images: [...prev.images, ...files] }));
   };
 
   const handleSubmit = async () => {
     // Validation
-    if (!formData.title || !formData.propertyType || !formData.category || 
-        !formData.state || !formData.city || formData.images.length < MIN_IMAGES) {
+    if (
+      !formData.title ||
+      !formData.propertyType ||
+      !formData.category ||
+      !formData.state ||
+      !formData.city ||
+      formData.images.length < MIN_IMAGES
+    ) {
       toast({
-        title: 'Missing required fields',
+        title: "Missing required fields",
         description: `Please fill in all required fields and upload at least ${MIN_IMAGES} images`,
-        status: 'warning',
+        status: "warning",
         duration: 3000,
         isClosable: true,
       });
@@ -333,11 +350,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       imageFiles: formData.images, // Pass File objects directly
       state: formData.state,
       city: formData.city,
+      capacity: formData.capacity || null, // <-- Add this line
     };
 
     // Simulate upload progress
     const progressInterval = setInterval(() => {
-      setUploadProgress(prev => {
+      setUploadProgress((prev) => {
         if (prev >= 90) {
           clearInterval(progressInterval);
           return 90;
@@ -356,7 +374,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
   }, [mutation.isSuccess]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="6xl" closeOnOverlayClick={!mutation.isPending}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="6xl"
+      closeOnOverlayClick={!mutation.isPending}
+    >
       <ModalOverlay />
       <ModalContent maxH="90vh" overflowY="auto">
         <ModalHeader color={accentColor}>Add New Property</ModalHeader>
@@ -364,8 +387,16 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         <ModalBody pb={6}>
           {mutation.isPending && (
             <Box mb={4}>
-              <Text fontSize="sm" mb={2}>Uploading property... {uploadProgress}%</Text>
-              <Progress value={uploadProgress} size="sm" colorScheme="purple" hasStripe isAnimated />
+              <Text fontSize="sm" mb={2}>
+                Uploading property... {uploadProgress}%
+              </Text>
+              <Progress
+                value={uploadProgress}
+                size="sm"
+                colorScheme="purple"
+                hasStripe
+                isAnimated
+              />
             </Box>
           )}
 
@@ -376,7 +407,10 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 <CustomSelectField
                   value={formData.category}
                   handleChange={(value: string | number) => {
-                    setFormData(prev => ({ ...prev, category: String(value) }));
+                    setFormData((prev) => ({
+                      ...prev,
+                      category: String(value),
+                    }));
                   }}
                   data={CATEGORY_OPTIONS}
                   itemValueKey="value"
@@ -386,20 +420,49 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 />
               </FormControl>
 
-              <FormControl isRequired>
-                <FormLabel>Property Type</FormLabel>
-                <CustomSelectField
-                  value={formData.propertyType}
-                  handleChange={(value: string | number) => {
-                    setFormData(prev => ({ ...prev, propertyType: String(value) }));
-                  }}
-                  data={PROPERTY_TYPES}
-                  itemValueKey="value"
-                  itemLabelKey="label"
-                  placeholder="Select property type"
-                  width="100%"
-                />
-              </FormControl>
+              {formData.category !== "Event Hall" && (
+                <FormControl isRequired>
+                  <FormLabel>Property Type</FormLabel>
+                  <CustomSelectField
+                    value={formData.propertyType}
+                    handleChange={(value: string | number) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        propertyType: String(value),
+                      }));
+                    }}
+                    data={PROPERTY_TYPES}
+                    itemValueKey="value"
+                    itemLabelKey="label"
+                    placeholder="Select property type"
+                    width="100%"
+                  />
+                </FormControl>
+              )}
+
+                {formData.category === 'Event Hall' && (
+                <FormControl isRequired>
+                  <FormLabel mt={4}>Capacity</FormLabel>
+                  <CustomSelectField
+                    value={formData.capacity}
+                    handleChange={(value: string | number) => {
+                      setFormData(prev => ({ ...prev, capacity: String(value) }));
+                    }}
+                    data={[
+                      { value: "0-50", label: "0-50" },
+                      { value: "50-100", label: "50-100" },
+                      { value: "100-200", label: "100-200" },
+                      { value: "200-500", label: "200-500" },
+                      { value: "500-1000", label: "500-1000" },
+                      { value: "1000+", label: "1000+" },
+                    ]}
+                    itemValueKey="value"
+                    itemLabelKey="label"
+                    placeholder="Select capacity"
+                    width="100%"
+              
+                  />
+                </FormControl>)}
 
               <FormControl isRequired>
                 <FormLabel>State</FormLabel>
@@ -439,7 +502,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  placeholder="Beautiful Downtown Condo"
+                  placeholder="4 Bedroom Detached Duplex"
                   size="lg"
                   borderRadius="xl"
                   _focus={{
@@ -453,12 +516,14 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 <FormLabel>Price</FormLabel>
                 <InputGroup size="lg">
                   <InputLeftElement pointerEvents="none">
-                    <Text fontSize="xl" color="gray.400">₦</Text>
+                    <Text fontSize="xl" color="gray.400">
+                      ₦
+                    </Text>
                   </InputLeftElement>
                   <Input
                     type="number"
                     name="price"
-                    value={formData.price || ''}
+                    value={formData.price || ""}
                     onChange={handleNumberChange}
                     placeholder="450000"
                     borderRadius="xl"
@@ -559,7 +624,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                             as={FiX}
                             cursor="pointer"
                             onClick={() => removeFeature(feature)}
-                            _hover={{ color: 'red.500' }}
+                            _hover={{ color: "red.500" }}
                           />
                         </Badge>
                       </WrapItem>
@@ -567,7 +632,10 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   </Wrap>
                 )}
 
-                <CheckboxGroup value={formData.features} onChange={handleFeatureChange}>
+                <CheckboxGroup
+                  value={formData.features}
+                  onChange={handleFeatureChange}
+                >
                   <Stack
                     spacing={3}
                     maxH="200px"
@@ -580,7 +648,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   >
                     <SimpleGrid columns={2} spacing={2}>
                       {PROPERTY_FEATURES.map((feature) => (
-                        <Checkbox key={feature} value={feature} colorScheme="purple" size="sm">
+                        <Checkbox
+                          key={feature}
+                          value={feature}
+                          colorScheme="purple"
+                          size="sm"
+                        >
                           {feature}
                         </Checkbox>
                       ))}
@@ -601,8 +674,17 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   borderRadius="xl"
                   p={6}
                   textAlign="center"
-                  cursor={formData.images.length >= MAX_IMAGES ? "not-allowed" : "pointer"}
-                  _hover={{ borderColor: formData.images.length >= MAX_IMAGES ? borderColor : accentColor }}
+                  cursor={
+                    formData.images.length >= MAX_IMAGES
+                      ? "not-allowed"
+                      : "pointer"
+                  }
+                  _hover={{
+                    borderColor:
+                      formData.images.length >= MAX_IMAGES
+                        ? borderColor
+                        : accentColor,
+                  }}
                   transition="all 0.2s"
                 >
                   <Input
@@ -616,12 +698,19 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   />
                   <label
                     htmlFor="property-image-upload"
-                    style={{ cursor: formData.images.length >= MAX_IMAGES ? "not-allowed" : "pointer" }}
+                    style={{
+                      cursor:
+                        formData.images.length >= MAX_IMAGES
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
                   >
                     <VStack spacing={2}>
                       <Icon as={FiCamera} boxSize={8} color="gray.400" />
                       <Text>
-                        {formData.images.length >= MAX_IMAGES ? "Maximum 10 images reached" : "Click to upload images"}
+                        {formData.images.length >= MAX_IMAGES
+                          ? "Maximum 10 images reached"
+                          : "Click to upload images"}
                       </Text>
                       <Text fontSize="sm" color="gray.500">
                         {formData.images.length} / {MAX_IMAGES} images selected
@@ -684,19 +773,21 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   flex={1}
                   bg={accentColor}
                   color="white"
-                  _hover={{ bg: 'purple.600' }}
+                  _hover={{ bg: "purple.600" }}
                   onClick={handleSubmit}
                   size="lg"
                   borderRadius="xl"
-                  isDisabled={formData.images.length < MIN_IMAGES || mutation.isPending}
+                  isDisabled={
+                    formData.images.length < MIN_IMAGES || mutation.isPending
+                  }
                   isLoading={mutation.isPending}
                   loadingText="Uploading..."
                 >
                   Add Property
                 </Button>
-                <Button 
-                  flex={1} 
-                  variant="outline" 
+                <Button
+                  flex={1}
+                  variant="outline"
                   onClick={onClose}
                   size="lg"
                   borderRadius="xl"

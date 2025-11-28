@@ -16,6 +16,7 @@ import Footer from "@/components/Footer";
 import SearchForm from '@/components/SearchForm';
 import { Property } from "@/types";
 import { createClient } from "@/utils/supabase/client";
+import { usePagination } from "@/hooks/usePagination";
 
 interface Filters {
   priceRange: [number, number];
@@ -165,11 +166,13 @@ const RentPropertyPage = () => {
     setSortOption(e.target.value);
   };
 
+  const pagination = usePagination(filteredProperties, 9);
+
   if (loading) {
     return (
       <Box bg="gray.50" minH="100vh">
         <Navbar />
-        <Flex justify="center" align="center" minH="60vh">
+        <Flex justify="center" align="center" minH="100vh">
           <Spinner size="xl" color="purple.500" thickness="4px" />
         </Flex>
       </Box>
@@ -254,9 +257,9 @@ const RentPropertyPage = () => {
             <SortSelect value={sortOption} onChange={handleSortChange} />
           </Flex>
 
-          {filteredProperties.length > 0 ? (
+          {pagination.paginatedData.length > 0 ? (
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {filteredProperties.map((property) => (
+              {pagination.paginatedData.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </SimpleGrid>
@@ -273,8 +276,12 @@ const RentPropertyPage = () => {
         </Box>
       </Container>
 
-      {filteredProperties.length > 0 && (
-        <Pagination/>
+      {pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={pagination.goToPage}
+        />
       )}
       <SearchForm/>
       <Footer/>

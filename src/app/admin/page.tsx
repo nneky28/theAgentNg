@@ -127,7 +127,7 @@ export default function AdminDashboardPage() {
       // Fetch recent properties for table
       const { data: recentProps, error: recentPropsError } = await supabase
         .from("properties")
-        .select("id, title, price, category, created_at, is_featured")
+        .select("id, title, price, category, created_at, is_featured, is_published")
         .eq("is_archived", false)
         .order("created_at", { ascending: false })
         .limit(5);
@@ -237,7 +237,7 @@ export default function AdminDashboardPage() {
                   <Th>Status</Th>
                 </Tr>
               </Thead>
-              <Tbody fontSize={'sm'}>
+              <Tbody>
                 {recentProperties.map((property) => (
                   <Tr key={property.id}>
                     <Td color="gray.600">

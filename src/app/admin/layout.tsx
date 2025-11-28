@@ -46,11 +46,12 @@ interface NavItemProps {
   label: string;
   href: string;
   isActive: boolean;
+  onClick?: () => void;
 }
 
-const NavItem = ({ icon, label, href, isActive }: NavItemProps) => {
+const NavItem = ({ icon, label, href, isActive, onClick }: NavItemProps) => {
   return (
-    <Link href={href} style={{ width: "100%" }}>
+    <Link href={href} style={{ width: "100%" }} onClick={onClick}>
       <Flex
         align="center"
         px={4}
@@ -307,24 +308,23 @@ export default function AdminLayout({
 
       {/* Navigation */}
     <VStack flex={1} spacing={1} py={4} align="stretch" p={4}>
-        {navItems.map((item) => {
-          // Dashboard should be active when pathname is exactly "/admin"
-          // Other routes should match exactly
-          const isActive = item.href === "/admin" 
+      {navItems.map((item) => {
+        const isActive = item.href === "/admin" 
           ? pathname === "/admin" 
           : pathname === item.href;
-          
-          return (
-            <NavItem
+
+        return (
+          <NavItem
             key={item.href}
             icon={item.icon}
             label={item.label}
             href={item.href}
             isActive={isActive}
-            />
-          );
-        })}
-      </VStack>
+            onClick={isOpen ? onClose : undefined} // <-- Close drawer on mobile
+          />
+        );
+      })}
+    </VStack>
 
       {/* User Profile & Logout */}
       <Box p={4} borderTop="1px" borderColor="gray.200">

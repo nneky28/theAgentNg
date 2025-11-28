@@ -28,10 +28,12 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { nigerianStates } from '@/utils/nigerian-states';
 import { FiX } from 'react-icons/fi';
+import { color } from 'framer-motion';
+import { colors } from '@/utils/color';
 
 const SettingsPage = () => {
   const toast = useToast();
-  const accentColor = '#724B9B';
+  const accentColor = colors.primary;
 
   const [formData, setFormData] = useState({
     username: '',

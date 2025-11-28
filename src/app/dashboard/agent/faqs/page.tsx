@@ -1,5 +1,6 @@
 'use client'
 
+import { colors } from '@/utils/color';
 import {
   Box,
   Container,
@@ -17,7 +18,7 @@ import {
 import { FiHelpCircle } from 'react-icons/fi';
 
 const FAQsPage = () => {
-  const accentColor = '#724B9B';
+  const accentColor = colors.primary;
 
   const faqs = [
     {

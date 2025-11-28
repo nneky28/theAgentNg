@@ -123,7 +123,7 @@ export default function AuthCallbackContent() {
 
         // ADMIN CHECK
         if (userData.role === "admin") {
-          router.replace("/admin/properties");
+          router.replace("/admin");
           return;
         }
 

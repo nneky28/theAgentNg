@@ -31,6 +31,7 @@ import { PropertyModal } from '@/components/dashboard/PropertyModal';
 import { Pagination } from '@/components/dashboard/Pagination';
 import { usePagination } from '@/hooks/usePagination';
 import { PropertyFormData } from '@/types/dashboard.types';
+import { colors } from '@/utils/color';
 
 const AgentDashboard = () => {
   const router = useRouter();
@@ -45,12 +46,9 @@ const AgentDashboard = () => {
   
   const bg = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
-  const accentColor = '#724B9B';
+  const accentColor = colors.primary;
 
-  const propertyPagination = usePagination({ 
-    data: properties, 
-    initialItemsPerPage: 4 
-  });
+  const propertyPagination = usePagination(properties, 4);
 
   // Auth check
   useEffect(() => {
@@ -442,10 +440,7 @@ const AgentDashboard = () => {
                   <Pagination
                     currentPage={propertyPagination.currentPage}
                     totalPages={propertyPagination.totalPages}
-                    itemsPerPage={propertyPagination.itemsPerPage}
-                    totalItems={propertyPagination.totalItems}
-                    onPageChange={propertyPagination.handlePageChange}
-                    onItemsPerPageChange={propertyPagination.handleItemsPerPageChange}
+                    onPageChange={propertyPagination.goToPage}
                   />
                 )}
               </>

@@ -1,4 +1,3 @@
-
 import {
   Box,
   Flex,
@@ -21,7 +20,8 @@ import {
   ModalCloseButton,
   Button,
   useToast,
-  Text
+  Text,
+  Avatar
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { FiBell, FiEdit, FiTrash2, FiLogOut, FiMenu } from "react-icons/fi";
@@ -29,11 +29,16 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { colors } from "@/utils/color";
 
-const TopBar = () => {
+interface TopBarProps {
+  setDrawerOpen: (open: boolean) => void;
+}
+
+const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
   const router = useRouter();
   const toast = useToast();
   const [notificationCount, setNotificationCount] = useState(0);
   const [userEmail, setUserEmail] = useState("");
+  const [userImage, setUserImage] = useState("");
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -50,6 +55,7 @@ const TopBar = () => {
       if (!user) return;
 
       setUserEmail(user.email || "");
+      setUserImage(user.user_metadata?.avatar_url || "");
 
       // Fetch unread notification count
       const { count, error } = await supabase
@@ -186,6 +192,7 @@ const TopBar = () => {
         boxShadow="sm"
         borderBottom="1px solid"
         borderColor="gray.100"
+        display={['none','flex']}
       >
         <Box cursor="pointer" onClick={() => router.push("/dashboard/agent")}>
           <Image
@@ -235,7 +242,7 @@ const TopBar = () => {
               variant="ghost"
               fontSize="20px"
               color="gray.600"
-              _hover={{ bg: "gray.100", color: "#724B9B" }}
+              _hover={{ bg: "gray.100", color: colors.primary }}
               aria-label="Menu"
             />
 
@@ -269,6 +276,61 @@ const TopBar = () => {
           </Menu>
         </HStack>
       </Flex>
+
+      {/* TopBar for mobile */}
+   <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        p="20px"
+        position="fixed"
+        top={0}
+        left={0}
+        right={0}
+        bg="white"
+        zIndex={1000}
+        px={{ base: "20px", md: "80px" }}
+        py="20px"
+        boxShadow="sm"
+        borderBottom="1px solid"
+        borderColor="gray.100"
+        display={['flex','none']}
+      > 
+         <IconButton
+          aria-label="Open menu"
+          icon={<FiMenu />}
+          variant="ghost"
+          onClick={() => setDrawerOpen(true)}
+        /> 
+           <Box position="relative">
+            <IconButton
+              aria-label="Notifications"
+              icon={<FiBell />}
+              variant="ghost"
+              fontSize="20px"
+              color="gray.600"
+              _hover={{ bg: "gray.100", color: colors.primary }}
+              position="relative"
+              onClick={handleNotifications}
+            />
+            {notificationCount > 0 && (
+              <Badge
+                position="absolute"
+                top="1"
+                right="1"
+                colorScheme="red"
+                borderRadius="full"
+                fontSize="10px"
+                minW="18px"
+                h="18px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </Badge>
+            )}
+          </Box>
+      </Flex> 
 
       <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} isCentered>
         <ModalOverlay />

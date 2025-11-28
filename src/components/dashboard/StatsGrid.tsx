@@ -147,7 +147,7 @@ export const StatsGrid = () => {
   return (
     <SimpleGrid columns={{ base: 2, md: 4 }} spacing={6}>
       <Card 
-        bg="rgba(255,255,255,0.1)" 
+        bg="rgba(94, 11, 91, 0.1)" 
         backdropFilter="blur(10px)" 
         border="1px solid rgba(255,255,255,0.2)"
         transition="all 0.3s"
@@ -167,7 +167,7 @@ export const StatsGrid = () => {
       </Card>
       
       <Card 
-        bg="rgba(255,255,255,0.1)" 
+        bg="rgba(94, 11, 91, 0.1)" 
         backdropFilter="blur(10px)" 
         border="1px solid rgba(255,255,255,0.2)"
         transition="all 0.3s"
@@ -187,7 +187,7 @@ export const StatsGrid = () => {
       </Card>
       
       <Card 
-        bg="rgba(255,255,255,0.1)" 
+        bg="rgba(94, 11, 91, 0.1)" 
         backdropFilter="blur(10px)" 
         border="1px solid rgba(255,255,255,0.2)"
         transition="all 0.3s"
@@ -207,7 +207,7 @@ export const StatsGrid = () => {
       </Card>
       
       <Card 
-        bg="rgba(255,255,255,0.1)" 
+        bg="rgba(94, 11, 91, 0.1)" 
         backdropFilter="blur(10px)" 
         border="1px solid rgba(255,255,255,0.2)"
         transition="all 0.3s"

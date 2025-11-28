@@ -80,14 +80,9 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          <Heading size="lg">{property.title}</Heading>
-          <Text color="gray.600" fontSize="sm">
-            {property?.city && property?.state 
-                ? `${property.city}, ${property.state}`
-                : property?.city || property?.state || 'Location not set'}
-          </Text>
+   
+        <ModalCloseButton  py={2}/>
         </ModalHeader>
-        <ModalCloseButton />
         <ModalBody pb={6}>
           {/* Image Slideshow */}
           {propertyImages.length > 0 && (
@@ -189,13 +184,21 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               ))}
             </Flex>
           )}
+          <Box>
+            <Heading size="lg">{property.title}</Heading>
+          <Text color="gray.600" fontSize="sm">
+            {property?.city && property?.state 
+                ? `${property.city}, ${property.state}`
+                : property?.city || property?.state || 'Location not set'}
+          </Text>
+          </Box>
 
           <Flex justify="space-between" mb={6} direction={["column", "row"]} gap={4}>
             <Box>
               <Text fontSize="2xl" fontWeight="bold" color="#724B9B">
                 {formatPrice(property.price)}
               </Text>
-              <Text color="gray.600">Price</Text>
+            
             </Box>
 
             <Flex gap={4}>
