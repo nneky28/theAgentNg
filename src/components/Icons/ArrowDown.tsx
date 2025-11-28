@@ -1,0 +1,30 @@
+import React from "react";
+
+interface ArrowUpIconProps extends React.SVGProps<SVGSVGElement> {
+  size?: string;
+  color?: string;
+}
+export const ArrowDownIcon: React.FunctionComponent<ArrowUpIconProps> = ({
+  size="20",
+  color = "#5F738C",
+  ...otherSvgProps
+}) => {
+  return (
+    <svg
+    data-testid="arrow-down-icon"
+    {...otherSvgProps}
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      fill="none"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M17.5002 6.66704C17.5002 6.88037 17.4185 7.0937 17.256 7.2562L10.5894 13.9229C10.2635 14.2487 9.73688 14.2487 9.41104 13.9229L2.74437 7.2562C2.41854 6.93037 2.41854 6.4037 2.74437 6.07787C3.07021 5.75204 3.59687 5.75204 3.92271 6.07787L10.0002 12.1554L16.0777 6.07787C16.4035 5.75204 16.9302 5.75204 17.256 6.07787C17.4185 6.24037 17.5002 6.4537 17.5002 6.66704Z"
+        fill={color}
+      />
+    </svg>
+  );
+};
