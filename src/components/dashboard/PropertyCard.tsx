@@ -121,7 +121,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       status: property.status || 'active',
       images: property.images ? [...property.images] : [],
     });
-    onOpen();e
+    onOpen();
   };
 
   const handleFormChange = (field: string, value: string | number | string[]) => {

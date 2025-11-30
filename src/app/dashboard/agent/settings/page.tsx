@@ -28,7 +28,6 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { nigerianStates } from '@/utils/nigerian-states';
 import { FiX } from 'react-icons/fi';
-import { color } from 'framer-motion';
 import { colors } from '@/utils/color';
 
 const SettingsPage = () => {
