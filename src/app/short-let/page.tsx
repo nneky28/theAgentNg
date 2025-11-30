@@ -63,32 +63,19 @@ const ShortLetPage = () => {
   };
 
 
-  // Filter properties by search term
-  const filteredProperties = properties.filter((property) => {
-    if (typeof property.location === "string") {
-      return property.location.toLowerCase().includes(searchTerm.toLowerCase());
-    } else if (
-      property.location &&
-      typeof property.location === "object"
-    ) {
-      const { city, state, country } = property.location;
-      const locationString = [city, state, country].filter(Boolean).join(" ").toLowerCase();
-      return locationString.includes(searchTerm.toLowerCase());
-    }
-    return false;
-  });
 
   if (loading) {
     return (
       <Box bg="gray.50" minH="100vh">
         <Navbar />
-        <Flex justify="center" align="center" minH="60vh">
+        <Flex justify="center" align="center" minH="100vh" mx={0}>
           <Spinner size="xl" color="purple.500" thickness="4px" />
         </Flex>
       </Box>
     );
   }
 
+  console.log("Filtered Properties:", properties);
   return (
     <Box>
       <Navbar />
@@ -159,7 +146,7 @@ const ShortLetPage = () => {
         textAlign="center"
         py={12}
       >
-        {filteredProperties.length === 0 ? (
+        {properties.length === 0 ? (
           <>
             <Heading as="h3" size="md" mb={4}>
               No Short Let Apartment Found
@@ -172,7 +159,7 @@ const ShortLetPage = () => {
         ) : (
           <Container maxW="container.xl" py={8}>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-              {filteredProperties.map((property) => (
+              {properties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </SimpleGrid>

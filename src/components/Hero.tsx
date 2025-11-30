@@ -47,7 +47,7 @@ const Hero = () => {
         backgroundPosition="center"
         backgroundRepeat="no-repeat"
         bgColor="#00425F"
-        h="60vh"
+        h={['600px']}
         _before={{
           content: '""',
           position: "absolute",
@@ -124,36 +124,6 @@ const Hero = () => {
               </Flex>
             </Box>
             
-            <Box>
-              <Stack direction={{ base: "column", md: "row" }} spacing={4} mt={4}>
-                <Button 
-                  size="lg" 
-                  bg={colors.primary}
-                  color={'white'}
-                  fontWeight={'bold'}
-                  borderRadius="full"
-                  px={8}
-                  _hover={{
-                    transform: "translateY(-2px)",
-                    boxShadow: "lg"
-                  }}
-                  transition="all 0.3s ease"
-                  _focus={
-                  {
-                      border: "none"
-                  }
-                  }
-                  onClick={() => {
-                    const agentCTASection = document.getElementById("featured");
-                    if (agentCTASection) {
-                      agentCTASection.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                >
-                  Get Started
-                </Button>
-              </Stack>
-            </Box>
           </Stack>
           
         </Flex>

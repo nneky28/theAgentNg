@@ -180,9 +180,9 @@ const BuyPropertyPage = () => {
     <Box bg="gray.50">
       <Navbar/>
       <Box
+        backgroundImage="url('/images/Sale1.jpg')"
         position="relative"
         overflow="hidden"
-        backgroundImage="url('/images/Sale1.jpg')"
         backgroundSize="cover"
         backgroundPosition="center"
         backgroundRepeat="no-repeat"

@@ -1,10 +1,11 @@
+import { colors } from "@/utils/color";
 import { Button, HStack } from "@chakra-ui/react";
 import React from "react";
 
 const Pagination = () => {
   return (
     <HStack justify="center" my={10} spacing={2}>
-      <Button size="sm" colorScheme="purple">
+      <Button size="sm" colorScheme="purple" bg={colors.primary} _hover={{ bg: colors.primary }} >
         1
       </Button>
       <Button size="sm" variant="outline">

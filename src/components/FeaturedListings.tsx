@@ -154,7 +154,7 @@ const FeaturedListings = () => {
                       {`${property?.city}, ${property?.state}`}
                     </Text>
                   <Flex justifyContent={'space-between'} alignContent={'center'} >
-                     <Text fontWeight="bold" fontSize="lg" color={colors.primary}>
+                     <Text fontWeight="bold" fontSize="lg" color={'gray.800'}>
                       {formatPrice(property.price)}
                     </Text>
                   <Badge 

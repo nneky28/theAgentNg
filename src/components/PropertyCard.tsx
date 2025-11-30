@@ -17,6 +17,7 @@ import { StarIcon } from '@chakra-ui/icons';
 import { FaBath, FaBed, FaMapMarkerAlt} from 'react-icons/fa';
 import PropertyDetailsModal from "./PropertyDetailsModal";
 import { Property } from "../types";
+import { colors } from '@/utils/color';
 
 const PropertyCard = ({ property }: { property: Property }) => {
   const [, setIsHovered] = useState(false);
@@ -108,8 +109,8 @@ const PropertyCard = ({ property }: { property: Property }) => {
             )}
           </HStack>
 
-          <Heading as="h3" size="md" mb={2} noOfLines={1}>
-            {property.title}
+          <Heading as="h3" size="md" mb={2} noOfLines={1} textAlign={'left'}>
+          {property.title}
           </Heading>
 
           <HStack mb={4} color="gray.600">
@@ -140,7 +141,7 @@ const PropertyCard = ({ property }: { property: Property }) => {
               </Text>
             </HStack>
           </Flex>
-          <Button colorScheme="purple" mt={4} w="full" onClick={onOpen}>
+          <Button bg={colors.primary} colorScheme="purple" mt={4} w="full" onClick={onOpen}>
             View Details
           </Button>
         </Box>
