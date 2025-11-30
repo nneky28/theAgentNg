@@ -21,7 +21,6 @@ import {
   Button,
   useToast,
   Text,
-  Avatar
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { FiBell, FiEdit, FiTrash2, FiLogOut, FiMenu } from "react-icons/fi";
@@ -38,7 +37,6 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
   const toast = useToast();
   const [notificationCount, setNotificationCount] = useState(0);
   const [userEmail, setUserEmail] = useState("");
-  const [userImage, setUserImage] = useState("");
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -55,7 +53,6 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
       if (!user) return;
 
       setUserEmail(user.email || "");
-      setUserImage(user.user_metadata?.avatar_url || "");
 
       // Fetch unread notification count
       const { count, error } = await supabase

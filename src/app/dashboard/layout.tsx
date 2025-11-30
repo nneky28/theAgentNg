@@ -10,11 +10,8 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerBody,
-  IconButton,
-  Avatar,
   Image,
 } from "@chakra-ui/react";
-import { FiMenu } from "react-icons/fi";
 import { usePathname, useRouter } from "next/navigation";
 import TopBar from "@/components/TopBar";
 import Sidebar from "@/components/SideBar";

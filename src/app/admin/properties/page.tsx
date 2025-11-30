@@ -36,9 +36,7 @@ import {
   SimpleGrid,
   Image,
   Stack,
-  useBreakpointValue,
-  Icon,
-  useDisclosure,
+
 } from "@chakra-ui/react";
 import {
   DeleteIcon,
@@ -49,7 +47,6 @@ import {
   CloseIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  useBreakPointValue,
 } from "@chakra-ui/icons";
 import { createClient } from "@/utils/supabase/client";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -77,7 +74,6 @@ const AdminPropertiesPage = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isConfirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<Property | null>(null);
