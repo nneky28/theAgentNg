@@ -56,40 +56,6 @@ export async function POST(request: Request) {
       throw error;
     }
 
-    // Send emails using EmailJS (non-blocking)
-    if (body.email) {
-      // Send client acknowledgment email
-      sendClientAcknowledgment({
-        name: `${body.firstName} ${body.lastName}`,
-        email: body.email,
-        propertyType: body.propertyType,
-        location: `${body.city}, ${body.state}`,
-      }).catch((emailError) => {
-        console.error('Client email error:', emailError);
-        // Don't fail the request if email fails
-      });
-    }
-
-    // Send admin notification email
-    const budgetRange = body.minBudget && body.maxBudget 
-      ? `₦${body.minBudget.toLocaleString()} - ₦${body.maxBudget.toLocaleString()}`
-      : body.minBudget 
-        ? `From ₦${body.minBudget.toLocaleString()}`
-        : body.maxBudget 
-          ? `Up to ₦${body.maxBudget.toLocaleString()}`
-          : 'Not specified';
-
-    sendAdminNotification({
-      clientName: `${body.firstName} ${body.lastName}`,
-      whatsapp: body.whatsapp,
-      email: body.email,
-      propertyType: body.propertyType,
-      location: `${body.area ? body.area + ', ' : ''}${body.city}, ${body.state}`,
-      budget: budgetRange,
-    }).catch((emailError) => {
-      console.error('Admin email error:', emailError);
-      // Don't fail the request if email fails
-    });
 
     return NextResponse.json({
       success: true,

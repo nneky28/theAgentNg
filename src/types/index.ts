@@ -189,3 +189,11 @@ export interface UserUpdate {
   onboarding_completed?: boolean;
   completed_at?: string;
 }
+
+
+
+export interface SearchApiResponse {
+  success: boolean;
+  message: string;
+  data: any;
+}
