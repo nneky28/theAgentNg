@@ -21,6 +21,10 @@ import {
   Badge,
   Text,
   useToast,
+  VStack,
+  useBreakpointValue,
+  HStack,
+  Divider,
 } from "@chakra-ui/react";
 import { FiUsers, FiMapPin, FiTrendingUp, FiStar } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
@@ -43,6 +47,8 @@ interface RecentProperty {
   is_featured: boolean;
   is_published: boolean;
 }
+
+
 
 const StatCard = ({ icon, label, value, helpText, color }: any) => (
   <Box
@@ -75,7 +81,7 @@ const StatCard = ({ icon, label, value, helpText, color }: any) => (
 );
 
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<Stats>({
+   const [stats, setStats] = useState<Stats>({
     totalProperties: 0,
     totalAgents: 0,
     featuredProperties: 0,
@@ -86,6 +92,7 @@ export default function AdminDashboardPage() {
   );
   const [loading, setLoading] = useState(true);
   const toast = useToast();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   useEffect(() => {
     fetchDashboardData();
@@ -127,7 +134,9 @@ export default function AdminDashboardPage() {
       // Fetch recent properties for table
       const { data: recentProps, error: recentPropsError } = await supabase
         .from("properties")
-        .select("id, title, price, category, created_at, is_featured, is_published")
+        .select(
+          "id, title, price, category, created_at, is_featured, is_published"
+        )
         .eq("is_archived", false)
         .order("created_at", { ascending: false })
         .limit(5);
@@ -170,14 +179,15 @@ export default function AdminDashboardPage() {
     );
   }
 
+
   return (
-    <Container maxW="container.xl">
-      <Heading mb={8} size="lg">
+    <Container maxW="container.xl" px={{ base: 4, md: 6 }}>
+      <Heading mb={8} size={{ base: "md", md: "lg" }}>
         Dashboard Overview
       </Heading>
 
       {/* Stats Grid */}
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+      <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 4, md: 6 }} mb={8}>
         <StatCard
           icon={FiMapPin}
           label="Total Properties"
@@ -208,14 +218,14 @@ export default function AdminDashboardPage() {
         />
       </SimpleGrid>
 
-      {/* Recent Properties Table */}
+      {/* Recent Properties Table/Cards */}
       <Box
         bg="white"
         borderRadius="xl"
         boxShadow="sm"
         borderWidth="1px"
         borderColor="gray.200"
-        p={6}
+        p={{ base: 4, md: 6 }}
       >
         <Heading size="md" mb={4}>
           Recent Properties
@@ -224,38 +234,125 @@ export default function AdminDashboardPage() {
           <Text color="gray.500" textAlign="center" py={8}>
             No properties found
           </Text>
+        ) : isMobile ? (
+          // Mobile Card View
+          <VStack spacing={4} align="stretch">
+            {recentProperties.map((property) => (
+              <Box
+                key={property.id}
+                borderWidth="1px"
+                borderColor="gray.200"
+                borderRadius="lg"
+                p={4}
+                _hover={{ bg: "gray.50" }}
+                transition="all 0.2s"
+              >
+                <VStack align="stretch" spacing={3}>
+                  {/* Title and Category */}
+                  <Box>
+                    <Text fontWeight="600" fontSize="md" mb={2} noOfLines={2}>
+                      {property.title}
+                    </Text>
+                    <HStack spacing={2} flexWrap="wrap">
+                      <Badge
+                        bg={
+                          property.category === "Properties To Let"
+                            ? "green.100"
+                            : property.category === "Properties For Sale"
+                            ? "orange.100"
+                            : "blue.100"
+                        }
+                        fontSize="xs"
+                      >
+                        {property.category === "Properties To Let"
+                          ? "To Let"
+                          : property.category === "Properties For Sale"
+                          ? "For Sale"
+                          : "Short Let"}
+                      </Badge>
+                      <Badge>
+                          {property.is_featured ? (
+                        <Badge colorScheme="yellow" fontSize="xs">
+                          ⭐ Featured
+                        </Badge>
+                      ) : property.is_published ? (
+                        <Badge colorScheme="green" fontSize="xs">
+                          <CheckIcon boxSize={2} mr={1} /> Published
+                        </Badge>
+                      ) : (
+                        <Badge colorScheme="gray" fontSize="xs">
+                          <CloseIcon boxSize={2} mr={1} /> Draft
+                        </Badge>
+                      )}
+                      </Badge>
+                    </HStack>
+                  </Box>
+
+                  <Divider />
+
+                  {/* Property Details */}
+                  <VStack align="stretch" spacing={2} fontSize="sm">
+                    <HStack justify="space-between">
+                      <Text color="gray.600">Price:</Text>
+                      <Text fontWeight="600" color="purple.600">
+                        {formatPrice(property.price)}
+                      </Text>
+                    </HStack>
+                    <HStack justify="space-between">
+                      <Text color="gray.600">Date Added:</Text>
+                      <Text fontWeight="500">
+                        {new Date(property.created_at).toLocaleDateString()}
+                      </Text>
+                    </HStack>
+                  </VStack>
+                </VStack>
+              </Box>
+            ))}
+          </VStack>
         ) : (
+          // Desktop Table View
           <Box overflowX="auto">
             <Table variant="simple">
-              <Thead>
+              <Thead bg="gray.50">
                 <Tr>
-                  <Th>Date</Th>
-                  <Th>Title</Th>
-                  <Th>Location</Th>
-                  <Th>Price</Th>
                   <Th>Category</Th>
+                  <Th>Title</Th>
+                  <Th>Price</Th>
+                  <Th>Date</Th>
                   <Th>Status</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {recentProperties.map((property) => (
-                  <Tr key={property.id}>
-                    <Td color="gray.600">
-                      {new Date(property.created_at).toLocaleDateString()}
-                    </Td>
-                    <Td>
-                      <Text noOfLines={1}>{property.title}</Text>
-                    </Td>
-                    <Td fontWeight="600">{formatPrice(property.price)}</Td>
-                    <Td>{property.category}</Td>
+                  <Tr key={property.id} _hover={{ bg: "gray.50" }}>
                     <Td>
                       <Badge
-                        colorScheme={
-                          property.category === "For Sale" ? "orange" : "green"
+                        bg={
+                          property.category === "Properties To Let"
+                            ? "green.100"
+                            : property.category === "Properties For Sale"
+                            ? "orange.100"
+                            : "blue.100"
                         }
+                        fontSize="xs"
                       >
-                        {property.category}
+                        {property.category === "Properties To Let"
+                          ? "To Let"
+                          : property.category === "Properties For Sale"
+                          ? "For Sale"
+                          : "Short Let"}
                       </Badge>
+                    </Td>
+                    <Td>
+                      <Text noOfLines={1} fontSize="sm">
+                        {property.title}
+                      </Text>
+                    </Td>
+                    <Td fontWeight="600" fontSize="sm">
+                      {formatPrice(property.price)}
+                    </Td>
+                    <Td color="gray.600" fontSize="sm">
+                      {new Date(property.created_at).toLocaleDateString()}
                     </Td>
                     <Td>
                       {property.is_featured ? (

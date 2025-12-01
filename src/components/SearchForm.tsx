@@ -18,6 +18,7 @@ import { getCities, nigerianStates } from "@/utils/nigerian-states";
 import { colors } from "@/utils/color";
 import CustomSelectField from "./CustomSelect";
 import { PROPERTY_TYPES } from "@/constants/propertyOptions";
+import { useSearchForm } from "@/hooks/useSearchForm";
 
 const SearchForm = React.memo(() => {
   const toast = useToast();
@@ -38,7 +39,7 @@ const SearchForm = React.memo(() => {
     capacity: "",
   });
   const [cities, setCities] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+ 
 
   useEffect(() => {
     if (formData.state) {
@@ -55,63 +56,69 @@ const SearchForm = React.memo(() => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+
+ const { formKey, handleSubmit, isLoading } = useSearchForm({
+    onSuccessMessage: 'Your request has been submitted successfully!',
+    onErrorMessage: 'Something went wrong. Please try again.',
+  });
   
-    try {
-      const response = await fetch("/api/search", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  // const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
   
-      const data = await response.json();
+  //   try {
+  //     const response = await fetch("/api/search", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
   
-      if (response.ok) {
-        toast({
-          title: "Request submitted successfully!",
-          description: "We'll get back to you within a week with property matches.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
+  //     const data = await response.json();
   
-        // Reset form
-        setFormData({
-          state: "",
-          city: "",
-          area: "",
-          propertyType: "",
-          purpose: "",
-          condition: "",
-          minBudget: "",
-          maxBudget: "",
-          firstName: "",
-          lastName: "",
-          whatsapp: "",
-          email: "",
-          category: "",
-          capacity: "",
-        });
-      } else {
-        throw new Error(data.message || "Something went wrong");
-      }
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      toast({
-        title: "Error submitting request",
-        description: errorMessage,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  //     if (response.ok) {
+  //       toast({
+  //         title: "Request submitted successfully!",
+  //         description: "We'll get back to you within a week with property matches.",
+  //         status: "success",
+  //         duration: 5000,
+  //         isClosable: true,
+  //       });
+  
+  //       // Reset form
+  //       setFormData({
+  //         state: "",
+  //         city: "",
+  //         area: "",
+  //         propertyType: "",
+  //         purpose: "",
+  //         condition: "",
+  //         minBudget: "",
+  //         maxBudget: "",
+  //         firstName: "",
+  //         lastName: "",
+  //         whatsapp: "",
+  //         email: "",
+  //         category: "",
+  //         capacity: "",
+  //       });
+  //     } else {
+  //       throw new Error(data.message || "Something went wrong");
+  //     }
+  //   } catch (error: unknown) {
+  //     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+  //     toast({
+  //       title: "Error submitting request",
+  //       description: errorMessage,
+  //       status: "error",
+  //       duration: 5000,
+  //       isClosable: true,
+  //     });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   return (
     <Box bg={colors.primary} py={12} id="search">
@@ -348,10 +355,10 @@ const SearchForm = React.memo(() => {
                 bg={colors.primary}
                 size="lg"
                 width="full"
-                isLoading={isSubmitting}
+                isLoading={isLoading}
                 loadingText="Submitting"
                 color={"white"}
-                disabled={isSubmitting}
+                disabled={isLoading}
                 display={"flex"}
                 alignSelf="flex-end"
                 mt={6}

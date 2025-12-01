@@ -1,14 +1,11 @@
-
 import emailjs from '@emailjs/browser';
 
-// Initialize EmailJS with your public key
-// Get this from https://dashboard.emailjs.com/admin/account
 const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
 const CLIENT_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_CLIENT_TEMPLATE!;
 const ADMIN_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_ADMIN_TEMPLATE!;
 
-// Initialize EmailJS
+// Initialize EmailJS (client-side only)
 if (typeof window !== 'undefined') {
   emailjs.init(EMAILJS_PUBLIC_KEY);
 }
@@ -30,6 +27,12 @@ interface AdminNotificationData {
 }
 
 export async function sendClientAcknowledgment(data: ClientAcknowledgmentData) {
+  // This function should only be called from the client-side
+  if (typeof window === 'undefined') {
+    console.warn('⚠️ sendClientAcknowledgment called from server-side, skipping');
+    return { success: false, error: 'Server-side execution not supported' };
+  }
+
   try {
     const templateParams = {
       to_email: data.email,
@@ -54,9 +57,15 @@ export async function sendClientAcknowledgment(data: ClientAcknowledgmentData) {
 }
 
 export async function sendAdminNotification(data: AdminNotificationData) {
+  // This function should only be called from the client-side
+  if (typeof window === 'undefined') {
+    console.warn('⚠️ sendAdminNotification called from server-side, skipping');
+    return { success: false, error: 'Server-side execution not supported' };
+  }
+
   try {
+    // Don't include to_email if it's configured in the template
     const templateParams = {
-      to_email: process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'admin@theagentng.com',
       client_name: data.clientName,
       whatsapp: data.whatsapp,
       client_email: data.email || 'Not provided',
@@ -65,6 +74,9 @@ export async function sendAdminNotification(data: AdminNotificationData) {
       budget: data.budget,
       dashboard_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://theagentng.com'}/admin/requests`,
     };
+
+    console.log('📧 Sending admin notification');
+    console.log('📧 Template params:', templateParams);
 
     const result = await emailjs.send(
       EMAILJS_SERVICE_ID,

@@ -328,27 +328,29 @@ export default function AdminLayout({
 
       {/* User Profile & Logout */}
       <Box p={4} borderTop="1px" borderColor="gray.200">
-        <HStack spacing={3} mb={3} p={4}>
+        <HStack align="start" spacing={3}>
           <Avatar size="sm" name={userData?.email || "Admin"} />
           <VStack align="start" spacing={0} flex={1}>
             <Text fontSize="sm" fontWeight="600" noOfLines={1}>
               {userData?.email || "Admin"}
             </Text>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color="gray.500" mb={2}>
               Super Admin
             </Text>
+            <Button
+              leftIcon={<FaSignOutAlt />}
+              onClick={handleLogout}
+              colorScheme="red"
+              variant="ghost"
+              size="sm"
+              alignSelf="start" 
+              mt={2}
+              // p={0}
+            >
+              Logout
+            </Button>
           </VStack>
         </HStack>
-        <Button
-          leftIcon={<FaSignOutAlt />}
-          onClick={handleLogout}
-          w="100%"
-          colorScheme="red"
-          variant="ghost"
-          size="sm"
-          >
-          Logout
-        </Button>
       </Box>
     </VStack>
   );
