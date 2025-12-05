@@ -1,7 +1,16 @@
-
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Container, Heading, Text, Image, Badge, Flex, useDisclosure, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Image,
+  Badge,
+  Flex,
+  useDisclosure,
+  Spinner,
+} from "@chakra-ui/react";
 import { Property } from "../types";
 import Marquee from "react-fast-marquee";
 import { colors } from "@/utils/color";
@@ -11,7 +20,9 @@ import { formatPrice } from "@/utils/Method";
 
 const FeaturedListings = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+    null
+  );
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +33,7 @@ const FeaturedListings = () => {
   const fetchFeaturedProperties = async () => {
     const supabase = createClient();
     setLoading(true);
-    
+
     try {
       const { data, error } = await supabase
         .from("properties")
@@ -42,6 +53,7 @@ const FeaturedListings = () => {
       setLoading(false);
     }
   };
+  console.log("Featured Properties:", featuredProperties);
 
   const getFirstImage = (property: Property) => {
     if (Array.isArray(property.images) && property.images.length > 0) {
@@ -72,12 +84,13 @@ const FeaturedListings = () => {
     return null;
   }
 
-  const forSaleProperties = featuredProperties.filter(
+  const forRentProperties = featuredProperties.filter(
     (property) => property.category === "Properties To Let"
   );
-  const forRentProperties = featuredProperties.filter(
+  const forSaleProperties = featuredProperties.filter(
     (property) => property.category === "Properties For Sale"
   );
+
 
 
   return (
@@ -86,95 +99,7 @@ const FeaturedListings = () => {
         <Heading as="h2" size="xl" mb={8} textAlign="center">
           Featured Listings
         </Heading>
-
-        {/* For Sale - Top, moves left */}
-        {forSaleProperties.length > 0 && (
-          <Box overflow="hidden" width="100%" mb={4}>
-            <Marquee
-              speed={40}
-              gradient={false}
-              pauseOnHover={true}
-              direction="left"
-              play={true}
-              style={{ padding: '10px 0' }}
-            >
-              {forSaleProperties.map((property, index) => (
-                <Box
-                  key={`for-sale-${property.id}-${index}`}
-                  borderRadius="lg"
-                  overflow="hidden"
-                  bg="white"
-                  boxShadow="md"
-                  transition="transform 0.3s"
-                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
-                  minW="300px"
-                  mx="15px" 
-                  flexShrink={0} 
-                  cursor="pointer"
-                  onClick={() => {
-                    setSelectedProperty(property);
-                    onOpen();
-                  }}
-                >
-                  <Box height="220px" overflow="hidden" position="relative">
-                    <Image 
-                      src={getFirstImage(property)}
-                      alt={property.title}
-                      width="100%"
-                      height="100%"
-                      objectFit="cover"
-                      transition="transform 0.3s"
-                      _hover={{ transform: 'scale(1.05)' }}
-                    
-                    />
-                    <Badge
-                      position="absolute"
-                      top={2}
-                      right={2}
-                      colorScheme="yellow"
-                      fontSize="xs"
-                      fontWeight="bold"
-                    >
-                      ⭐
-                    </Badge>
-                  </Box>
-                  
-                  <Box p={5}>
-                    <Flex justifyContent="space-between" alignItems="center" mb={2}>
-                      <Badge colorScheme={property.condition === "For Rent" ? "green" : "orange"}>
-                        {property.condition}
-                      </Badge>
-                      <Badge>{property.type}</Badge>
-                    </Flex>
-                    
-                    <Heading as="h3" size="md" mb={2} noOfLines={1}>
-                      {property.title}
-                    </Heading>
-                    <Text color="gray.600" mb={3} noOfLines={1}>
-                      {`${property?.city}, ${property?.state}`}
-                    </Text>
-                  <Flex justifyContent={'space-between'} alignContent={'center'} >
-                     <Text fontWeight="bold" fontSize="lg" color={'gray.800'}>
-                      {formatPrice(property.price)}
-                    </Text>
-                  <Badge 
-                    colorScheme={property.category === "Properties To Let" ? "green" : "orange"} 
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    display={'flex'}
-                    
-                    >
-                      {property.category === "Properties To Let" ? "For Sale" : "For Rent"}
-                  </Badge>
-               </Flex>
-                  </Box>
-                </Box>
-              ))}
-            </Marquee>
-          </Box>
-        )}
-
-        {/* For Rent - Bottom, moves right */}
+   {/* For Rent - Bottom, moves right */}
         {forRentProperties.length > 0 && (
           <Box overflow="hidden" width="100%">
             <Marquee
@@ -183,7 +108,7 @@ const FeaturedListings = () => {
               pauseOnHover={true}
               direction="right"
               play={true}
-              style={{ padding: '10px 0' }}
+              style={{ padding: "10px 0" }}
             >
               {forRentProperties.map((property, index) => (
                 <Box
@@ -193,10 +118,10 @@ const FeaturedListings = () => {
                   bg="white"
                   boxShadow="md"
                   transition="transform 0.3s"
-                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'lg' }}
+                  _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
                   minW="300px"
-                  mx="15px" 
-                  flexShrink={0} 
+                  mx="15px"
+                  flexShrink={0}
                   cursor="pointer"
                   onClick={() => {
                     setSelectedProperty(property);
@@ -204,14 +129,14 @@ const FeaturedListings = () => {
                   }}
                 >
                   <Box height="220px" overflow="hidden" position="relative">
-                    <Image 
+                    <Image
                       src={getFirstImage(property)}
                       alt={property.title}
                       width="100%"
                       height="100%"
                       objectFit="cover"
                       transition="transform 0.3s"
-                      _hover={{ transform: 'scale(1.05)' }}
+                      _hover={{ transform: "scale(1.05)" }}
                       fallbackSrc="https://via.placeholder.com/300x220?text=No+Image"
                     />
                     <Badge
@@ -225,41 +150,137 @@ const FeaturedListings = () => {
                       ⭐
                     </Badge>
                   </Box>
-                  
+
                   <Box p={5}>
-                    <Flex justifyContent="space-between" alignItems="center" mb={2}>
-                      <Badge colorScheme={property.condition === "For Sale" ? "orange" : "green"}>
-                        {property.condition}
-                      </Badge>
-                      <Badge>{property.type}</Badge>
-                    </Flex>
-                    
-                    <Heading as="h3" size="md" mb={2} noOfLines={1}>
+                   <Heading as="h3" size="md" mb={2} noOfLines={1}>
                       {property.title}
                     </Heading>
                     <Text color="gray.600" mb={3} noOfLines={1}>
-                     {`${property?.city}, ${property?.state}`}
+                      {`${property?.city}, ${property?.state}`}
                     </Text>
-                    <Flex justifyContent={'space-between'} alignContent={'center'} >
-                     <Text fontWeight="bold" fontSize="lg" color={colors.primary}>
-                      {formatPrice(property.price)}
-                    </Text>
-                  <Badge 
-                    colorScheme={property.category === "Properties To Let" ? "green" : "orange"} 
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    display={'flex'}
-                    
-                    >
-                      {property.category === "Properties To Let" ? "For Sale" : "For Rent"}
-                  </Badge>
-               </Flex>
+                    <Flex
+                      justifyContent={"space-between"}
+                      alignContent={"center"}>
+                      <Text
+                        fontWeight="bold"
+                        fontSize="lg"
+                        color={colors.primary}
+                      >
+                        {formatPrice(property.price)}
+                      </Text>
+                      <Badge
+                        bg={
+                          property.category === "Properties To Let"
+                            ? "green.100"
+                            : "orange.100"
+                        }
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                        display={"flex"}
+                      >
+                        {property.category === "Properties To Let"
+                          ? "To LET"
+                          : "For Sale"}
+                      </Badge>
+                    </Flex>
                   </Box>
                 </Box>
               ))}
             </Marquee>
           </Box>
         )}
+        {/* For Sale - Top, moves left */}
+        {forSaleProperties.length > 0 && (
+          <Box overflow="hidden" width="100%" mb={4}>
+            <Marquee
+              speed={40}
+              gradient={false}
+              pauseOnHover={true}
+              direction="left"
+              play={true}
+              style={{ padding: "10px 0" }}
+            >
+              {forSaleProperties.map((property, index) => (
+                <Box
+                  key={`for-sale-${property.id}-${index}`}
+                  borderRadius="lg"
+                  overflow="hidden"
+                  bg="white"
+                  boxShadow="md"
+                  transition="transform 0.3s"
+                  _hover={{ transform: "translateY(-5px)", boxShadow: "lg" }}
+                  minW="300px"
+                  mx="15px"
+                  flexShrink={0}
+                  cursor="pointer"
+                  onClick={() => {
+                    setSelectedProperty(property);
+                    onOpen();
+                  }}
+                >
+                  <Box height="220px" overflow="hidden" position="relative">
+                    <Image
+                      src={getFirstImage(property)}
+                      alt={property.title}
+                      width="100%"
+                      height="100%"
+                      objectFit="cover"
+                      transition="transform 0.3s"
+                      _hover={{ transform: "scale(1.05)" }}
+                    />
+                    <Badge
+                      position="absolute"
+                      top={2}
+                      right={2}
+                      colorScheme="yellow"
+                      fontSize="xs"
+                      fontWeight="bold"
+                    >
+                      ⭐
+                    </Badge>
+                  </Box>
+
+                  <Box p={5}>
+                    <Heading as="h3" size="md" mb={2} noOfLines={1}>
+                      {property.title}
+                    </Heading>
+                    <Text color="gray.600" mb={3} noOfLines={1}>
+                      {`${property?.city}, ${property?.state}`}
+                    </Text>
+                    <Flex
+                      justifyContent={"space-between"}
+                      alignContent={"center"}
+                    >
+                      <Text
+                        fontWeight="bold"
+                        fontSize="lg"
+                        color={colors.primary}
+                      >
+                        {formatPrice(property.price)}
+                      </Text>
+                      <Flex justifyContent="space-between" alignItems="center">
+                        <Badge
+                          colorScheme={
+                            property.category === "Properties To Let"
+                              ? "green"
+                              : "orange"
+                          }
+                          alignItems={"center"}
+                        >
+                          {property.category === "Properties To Let"
+                            ? "To let"
+                            : "For Sale"}
+                        </Badge>
+                      </Flex>
+                    </Flex>
+                  </Box>
+                </Box>
+              ))}
+            </Marquee>
+          </Box>
+        )}
+
+     
       </Container>
 
       {selectedProperty && (
@@ -271,8 +292,6 @@ const FeaturedListings = () => {
       )}
     </Box>
   );
-}
+};
 
 export default FeaturedListings;
-
-

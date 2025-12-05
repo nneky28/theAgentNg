@@ -4,6 +4,7 @@ const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
 const CLIENT_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_CLIENT_TEMPLATE!;
 const ADMIN_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_ADMIN_TEMPLATE!;
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!; // Add this to your .env file
 
 // Initialize EmailJS (client-side only)
 if (typeof window !== 'undefined') {
@@ -13,17 +14,28 @@ if (typeof window !== 'undefined') {
 interface ClientAcknowledgmentData {
   name: string;
   email: string;
-  propertyType: string;
-  location: string;
+  property_type: string;
+  state?: string;
+  city?: string;
+  location?: string;
+  category: string;
 }
 
 interface AdminNotificationData {
-  clientName: string;
+  name: string;
   whatsapp: string;
   email?: string;
-  propertyType: string;
-  location: string;
-  budget: string;
+  property_type: string;
+  state?: string;
+  city?: string;
+  min_budget?: string;
+  max_budget?: string;
+  location?: string;
+  budget?: string;
+  category: string;
+  area?: string;
+  purpose?: string;
+  capacity?: string;
 }
 
 export async function sendClientAcknowledgment(data: ClientAcknowledgmentData) {
@@ -34,13 +46,18 @@ export async function sendClientAcknowledgment(data: ClientAcknowledgmentData) {
   }
 
   try {
+    console.log('📧 Sending client acknowledgment to:', data);
+    
     const templateParams = {
       to_email: data.email,
       to_name: data.name,
-      property_type: data.propertyType,
-      location: data.location,
+      category: data.category || '',
+      property_type: data.property_type ||'',
+      location: data.city && data.state ? `${data.city}, ${data.state}` : 'Nigeria',
       site_url: process.env.NEXT_PUBLIC_SITE_URL || 'https://theagentng.com',
     };
+
+    console.log('📧 Client template params:', templateParams);
 
     const result = await emailjs.send(
       EMAILJS_SERVICE_ID,
@@ -64,19 +81,39 @@ export async function sendAdminNotification(data: AdminNotificationData) {
   }
 
   try {
-    // Don't include to_email if it's configured in the template
+    console.log('📧 Sending admin notification');
+    
+    // Format location
+    const location = data.city && data.state 
+      ? `${data.city}, ${data.state}${data.area ? ` (${data.area})` : ''}`
+      : 'Not specified';
+
+    // Format budget
+    const budget = data.min_budget && data.max_budget
+      ? `₦${Number(data.min_budget).toLocaleString()} - ₦${Number(data.max_budget).toLocaleString()}`
+      : 'Not specified';
+
+    // Format property details
+    const propertyDetails = data.category === 'Event Hall'
+      ? `${data.category} (Capacity: ${data.capacity || 'Not specified'})`
+      : `${data.property_type || data.category || 'Property'} (${data.purpose || 'Not specified'})`;
+
     const templateParams = {
-      client_name: data.clientName,
-      whatsapp: data.whatsapp,
+      to_email: ADMIN_EMAIL, // IMPORTANT: Add admin email here
+      client_name: data.name,
+      client_whatsapp: data.whatsapp,
       client_email: data.email || 'Not provided',
-      property_type: data.propertyType,
-      location: data.location,
-      budget: data.budget,
-      dashboard_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://theagentng.com'}/admin/requests`,
+      property_details: propertyDetails,
+      property_type: data.property_type || data.category || 'Not specified',
+      location: location,
+      budget: budget,
+      category: data.category || 'Not specified',
+      purpose: data.purpose || 'Not specified',
+      capacity: data.capacity || 'N/A',
+      area: data.area || 'Not specified',
     };
 
-    console.log('📧 Sending admin notification');
-    console.log('📧 Template params:', templateParams);
+    console.log('📧 Admin template params:', templateParams);
 
     const result = await emailjs.send(
       EMAILJS_SERVICE_ID,

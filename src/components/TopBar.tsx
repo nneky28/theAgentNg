@@ -91,6 +91,7 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
     };
   };
 
+
   const handleSignOut = async () => {
     const supabase = createClient();
     

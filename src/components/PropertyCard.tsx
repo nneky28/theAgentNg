@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client";
-import React, { useState } from 'react'
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -9,15 +9,14 @@ import {
   HStack,
   Icon,
   Image,
-  Tag,
   Text,
   useDisclosure,
+  Badge,
 } from "@chakra-ui/react";
-import { StarIcon } from '@chakra-ui/icons';
-import { FaBath, FaBed, FaMapMarkerAlt} from 'react-icons/fa';
+import { FaBath, FaBed, FaMapMarkerAlt } from "react-icons/fa";
 import PropertyDetailsModal from "./PropertyDetailsModal";
 import { Property } from "../types";
-import { colors } from '@/utils/color';
+import { colors } from "@/utils/color";
 
 const PropertyCard = ({ property }: { property: Property }) => {
   const [, setIsHovered] = useState(false);
@@ -37,17 +36,18 @@ const PropertyCard = ({ property }: { property: Property }) => {
   };
 
   const formatPrice = (price: string | number) => {
-    if (!price) return 'N/A';
-    
-    const numericPrice = typeof price === 'string' 
-      ? price.replace(/[₦,NGN\s]/g, '') 
-      : price.toString();
-    
+    if (!price) return "N/A";
+
+    const numericPrice =
+      typeof price === "string"
+        ? price.replace(/[₦,NGN\s]/g, "")
+        : price.toString();
+
     const priceNum = parseFloat(numericPrice);
-    
+
     if (isNaN(priceNum)) return price;
-    
-    return `₦${priceNum.toLocaleString('en-NG', {
+
+    return `₦${priceNum.toLocaleString("en-NG", {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     })}`;
@@ -68,21 +68,7 @@ const PropertyCard = ({ property }: { property: Property }) => {
         onClick={onOpen}
         cursor="pointer"
       >
-        {property.is_premium && (
-          <Tag
-            position="absolute"
-            top={3}
-            left={3}
-            bg="#724B9B"
-            color="white"
-            fontWeight="bold"
-            size="sm"
-            zIndex={1}
-          >
-            Premium
-          </Tag>
-        )}
-
+      
         <Box position="relative" h="240px">
           <Image
             src={getFirstImage(property)}
@@ -90,62 +76,71 @@ const PropertyCard = ({ property }: { property: Property }) => {
             w="100%"
             h="100%"
             objectFit="cover"
-            fallbackSrc="https://via.placeholder.com/400x240?text=No+Image"
+            fallbackSrc=""
           />
+        { property.is_featured && 
+          <Badge
+            position="absolute"
+            top={2}
+            right={2}
+            colorScheme="yellow"
+            fontSize="xs"
+            fontWeight="bold"
+          >
+            ⭐
+          </Badge>}
         </Box>
 
         <Box p={5}>
-          <HStack justifyContent="space-between" mb={2}>
-            <Text color="#724B9B" fontWeight="bold" fontSize="xl">
-              {formatPrice(property.price)}
-            </Text>
-            {property.is_featured && (
-              <HStack color="orange.400">
-                <StarIcon />
-                <Text fontSize="sm" fontWeight="medium">
-                  Featured
-                </Text>
-              </HStack>
-            )}
-          </HStack>
-
-          <Heading as="h3" size="md" mb={2} noOfLines={1} textAlign={'left'}>
-          {property.title}
+      
+          <Heading as="h3" size="md" mb={2} noOfLines={1} textAlign={"left"}>
+            {property.title}
           </Heading>
-
-          <HStack mb={4} color="gray.600">
+          <HStack color="gray.600" mb={1}>
             <Icon as={FaMapMarkerAlt} />
             <Text fontSize="sm" noOfLines={1}>
-              {property?.city && property?.state 
+              {property?.city && property?.state
                 ? `${property.city}, ${property.state}`
-                : property?.city || property?.state || 'Location not set'}
+                : property?.city || property?.state || ""}
             </Text>
           </HStack>
-
+         <Text color="#724B9B" fontWeight="bold" fontSize="xl" textAlign={'left'}>
+              {formatPrice(property.price)}
+            </Text>
           <Flex
             justify="space-between"
             borderTop="1px"
             borderColor="gray.100"
             pt={3}
+            mt={1}
           >
             <HStack>
               <Icon as={FaBed} color="gray.600" />
               <Text fontSize="sm">
-                {property.beds || property.bedrooms || 0} {(property.beds || property.bedrooms || 0) > 1 ? "Beds" : "Bed"}
+                {property.beds || property.bedrooms || 0}{" "}
+                {(property.beds || property.bedrooms || 0) > 1 ? "Beds" : "Bed"}
               </Text>
             </HStack>
             <HStack>
               <Icon as={FaBath} color="gray.600" />
               <Text fontSize="sm">
-                {property.baths || property.bathrooms || 0} {(property.baths || property.bathrooms || 0) > 1 ? "Baths" : "Bath"}
+                {property.baths || property.bathrooms || 0}{" "}
+                {(property.baths || property.bathrooms || 0) > 1
+                  ? "Baths"
+                  : "Bath"}
               </Text>
             </HStack>
           </Flex>
-          <Button bg={colors.primary} colorScheme="purple" mt={4} w="full" onClick={onOpen}>
+          <Button
+            bg={colors.primary}
+            colorScheme="purple"
+            mt={4}
+            w="full"
+            onClick={onOpen}
+          >
             View Details
           </Button>
         </Box>
-     
       </Box>
 
       <PropertyDetailsModal

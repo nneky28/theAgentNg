@@ -32,12 +32,9 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  IconButton,
 } from "@chakra-ui/react";
-import {
-  ChevronDownIcon,
-  DeleteIcon,
-  ViewIcon,
-} from "@chakra-ui/icons";
+import { ChevronDownIcon, DeleteIcon, ViewIcon } from "@chakra-ui/icons";
 import { FiPhone } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
 
@@ -68,28 +65,21 @@ export default function AdminAgentsPage() {
   const fetchAgents = async () => {
     const supabase = createClient();
     setLoading(true);
-    
+
     try {
       const { data, error } = await supabase
         .from("users")
         .select("*")
         .eq("role", "agent")
         .order("created_at", { ascending: false });
-
-      console.log("👥 Agents query result:", data);
-      console.log("👥 Agents count:", data?.length);
-
       if (error) throw error;
-      
+
       // Force state update
       setAgents([]);
       setTimeout(() => {
         setAgents(data || []);
       }, 0);
-      
-      console.log("✅ Agents set successfully");
     } catch (error: unknown) {
-      console.error("❌ Fetch error:", error);
       toast({
         title: "Error fetching agents",
         description: error as string,
@@ -102,11 +92,15 @@ export default function AdminAgentsPage() {
   };
 
   const handleDeleteAgent = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this agent? This action cannot be undone.")) 
+    if (
+      !confirm(
+        "Are you sure you want to delete this agent? This action cannot be undone."
+      )
+    )
       return;
 
     const supabase = createClient();
-    
+
     try {
       // First delete from public.users
       const { error: userError } = await supabase
@@ -118,7 +112,7 @@ export default function AdminAgentsPage() {
 
       // Then delete from auth.users (requires admin privileges)
       const { error: authError } = await supabase.auth.admin.deleteUser(id);
-      
+
       if (authError) {
         console.warn("Could not delete from auth.users:", authError);
         // Continue unknownway as the user record is deleted
@@ -129,12 +123,12 @@ export default function AdminAgentsPage() {
         status: "success",
         duration: 3000,
       });
-      
+
       fetchAgents();
     } catch (error: unknown) {
       toast({
         title: "Error deleting agent",
-       description: error as string,
+        description: error as string,
         status: "error",
         duration: 3000,
       });
@@ -146,11 +140,14 @@ export default function AdminAgentsPage() {
     onOpen();
   };
 
-  const filteredAgents = agents.filter((agent) =>
-    agent.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    agent.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    agent.whatsapp_no?.includes(searchTerm)
+  const filteredAgents = agents.filter(
+    (agent) =>
+      agent.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.state?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  console.log("Searchterm", searchTerm);
 
   if (loading) {
     return (
@@ -170,7 +167,7 @@ export default function AdminAgentsPage() {
       </Flex>
 
       <Input
-        placeholder="Search agents by email, name, or phone..."
+        placeholder="Search agents by name or location..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         mb={6}
@@ -214,10 +211,7 @@ export default function AdminAgentsPage() {
                 <Tr key={agent.id} _hover={{ bg: "gray.50" }}>
                   <Td>
                     <HStack spacing={3}>
-                      <Avatar
-                        size="sm"
-                        name={agent.username || agent.email}
-                      />
+                      <Avatar size="sm" name={agent.username || agent.email} />
                       <VStack spacing={0} align="start">
                         <Text fontWeight="600" fontSize="sm">
                           {agent.username || "Not set"}
@@ -260,14 +254,12 @@ export default function AdminAgentsPage() {
                   <Td>
                     <Menu>
                       <MenuButton
-                        as={Button}
-                        rightIcon={<ChevronDownIcon />}
+                        as={IconButton}
+                        icon={<ChevronDownIcon />}
                         size="sm"
                         colorScheme="purple"
-                        variant="ghost"
-                      >
-                        Actions
-                      </MenuButton>
+                        aria-label="Actions"
+                      />
                       <MenuList>
                         <MenuItem
                           icon={<ViewIcon />}
@@ -307,24 +299,36 @@ export default function AdminAgentsPage() {
                     name={selectedAgent.username || selectedAgent.email}
                   />
                 </Flex>
-                
+
                 <Box>
-                  <Text fontSize="sm" color="gray.600" mb={1}>Full Name</Text>
-                  <Text fontWeight="600">{selectedAgent.username || "Not provided"}</Text>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    Full Name
+                  </Text>
+                  <Text fontWeight="600">
+                    {selectedAgent.username || "Not provided"}
+                  </Text>
                 </Box>
 
                 <Box>
-                  <Text fontSize="sm" color="gray.600" mb={1}>Email</Text>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    Email
+                  </Text>
                   <Text fontWeight="600">{selectedAgent.email}</Text>
                 </Box>
 
                 <Box>
-                  <Text fontSize="sm" color="gray.600" mb={1}>WhatsApp Number</Text>
-                  <Text fontWeight="600">{selectedAgent.whatsapp_no || "Not provided"}</Text>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    WhatsApp Number
+                  </Text>
+                  <Text fontWeight="600">
+                    {selectedAgent.whatsapp_no || "Not provided"}
+                  </Text>
                 </Box>
 
                 <Box>
-                  <Text fontSize="sm" color="gray.600" mb={1}>Location</Text>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    Location
+                  </Text>
                   <Text fontWeight="600">
                     {selectedAgent.city && selectedAgent.state
                       ? `${selectedAgent.city}, ${selectedAgent.state}`
@@ -333,14 +337,22 @@ export default function AdminAgentsPage() {
                 </Box>
 
                 <Box>
-                  <Text fontSize="sm" color="gray.600" mb={1}>Onboarding Status</Text>
-                  <Badge colorScheme={selectedAgent.is_onboarded ? "green" : "yellow"}>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    Onboarding Status
+                  </Text>
+                  <Badge
+                    colorScheme={
+                      selectedAgent.is_onboarded ? "green" : "yellow"
+                    }
+                  >
                     {selectedAgent.is_onboarded ? "Completed" : "Pending"}
                   </Badge>
                 </Box>
 
                 <Box>
-                  <Text fontSize="sm" color="gray.600" mb={1}>Account ID</Text>
+                  <Text fontSize="sm" color="gray.600" mb={1}>
+                    Account ID
+                  </Text>
                   <Text fontSize="xs" fontFamily="mono" color="gray.500">
                     {selectedAgent.id}
                   </Text>

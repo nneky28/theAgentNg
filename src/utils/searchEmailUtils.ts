@@ -27,9 +27,10 @@ export const sendSearchRequestEmails = async (data: SearchFormData) => {
   if (data.email) {
     emailPromises.push(
       sendClientAcknowledgment({
-        name: `${data.firstName} ${data.lastName}`,
+        name: data.name,
         email: data.email,
-        propertyType: data.propertyType,
+        category: data.category,
+        property_type: data.property_type,
         location: `${data.city}, ${data.state}`,
       }).catch((error) => {
         console.error('Client email failed:', error);
@@ -38,16 +39,17 @@ export const sendSearchRequestEmails = async (data: SearchFormData) => {
   }
 
   // Send admin notification email
-  const budgetRange = formatBudgetRange(data.minBudget, data.maxBudget);
+  const budgetRange = formatBudgetRange(data.min_budget, data.max_budget);
 
   emailPromises.push(
     sendAdminNotification({
-      clientName: `${data.firstName} ${data.lastName}`,
+      name: data.name,
       whatsapp: data.whatsapp,
       email: data.email,
-      propertyType: data.propertyType,
-      location: `${data.area ? data.area + ', ' : ''}${data.city}, ${data.state}`,
+      property_type: data.property_type,
+      location: `${data.city}, ${data.state}`,
       budget: budgetRange,
+      category: data.category,
     }).catch((error) => {
       console.error('Admin email failed:', error);
     })

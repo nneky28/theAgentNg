@@ -10,7 +10,6 @@ import {
   FormLabel,
   Input,
   Button,
-  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { SearchFormData } from "../types";
@@ -21,25 +20,21 @@ import { PROPERTY_TYPES } from "@/constants/propertyOptions";
 import { useSearchForm } from "@/hooks/useSearchForm";
 
 const SearchForm = React.memo(() => {
-  const toast = useToast();
   const [formData, setFormData] = useState<SearchFormData>({
     state: "",
     city: "",
     area: "",
-    propertyType: "",
+    property_type: "",
     purpose: "",
-    condition: "",
-    minBudget: "",
-    maxBudget: "",
-    firstName: "",
-    lastName: "",
+    min_budget: "",
+    max_budget: "",
+    name: "",
     whatsapp: "",
     email: "",
     category: "",
     capacity: "",
   });
   const [cities, setCities] = useState<string[]>([]);
- 
 
   useEffect(() => {
     if (formData.state) {
@@ -56,69 +51,45 @@ const SearchForm = React.memo(() => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-
- const { formKey, handleSubmit, isLoading } = useSearchForm({
+  const { handleSubmit, isLoading } = useSearchForm({
     onSuccessMessage: 'Your request has been submitted successfully!',
     onErrorMessage: 'Something went wrong. Please try again.',
+    onSuccess: () => {
+      setFormData({
+        state: "",
+        city: "",
+        area: "",
+        property_type: "",
+        purpose: "",
+        min_budget: "",
+        max_budget: "",
+        name: "",
+        whatsapp: "",
+        email: "",
+        category: "",
+        capacity: "",
+      });
+      setCities([]);
+    }
   });
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const form = e.currentTarget;
+    Object.entries(formData).forEach(([key, value]) => {
+      // Check if hidden input already exists
+      let input = form.querySelector(`input[name="${key}"][type="hidden"]`) as HTMLInputElement;
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        form.appendChild(input);
+      }
+      input.value = String(value || '');
+    });
+    handleSubmit(e);
+  };
   
-  // const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   setIsSubmitting(true);
-  
-  //   try {
-  //     const response = await fetch("/api/search", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-  
-  //     const data = await response.json();
-  
-  //     if (response.ok) {
-  //       toast({
-  //         title: "Request submitted successfully!",
-  //         description: "We'll get back to you within a week with property matches.",
-  //         status: "success",
-  //         duration: 5000,
-  //         isClosable: true,
-  //       });
-  
-  //       // Reset form
-  //       setFormData({
-  //         state: "",
-  //         city: "",
-  //         area: "",
-  //         propertyType: "",
-  //         purpose: "",
-  //         condition: "",
-  //         minBudget: "",
-  //         maxBudget: "",
-  //         firstName: "",
-  //         lastName: "",
-  //         whatsapp: "",
-  //         email: "",
-  //         category: "",
-  //         capacity: "",
-  //       });
-  //     } else {
-  //       throw new Error(data.message || "Something went wrong");
-  //     }
-  //   } catch (error: unknown) {
-  //     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-  //     toast({
-  //       title: "Error submitting request",
-  //       description: errorMessage,
-  //       status: "error",
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
+
 
   return (
     <Box bg={colors.primary} py={12} id="search">
@@ -135,7 +106,7 @@ const SearchForm = React.memo(() => {
 
         <Box
           as="form"
-          onSubmit={handleSubmit}
+          onSubmit={onSubmit}
           bg="purple.50"   
           p={8}
           borderRadius="lg"
@@ -167,25 +138,25 @@ const SearchForm = React.memo(() => {
                   itemLabelKey="label"
                   placeholder="Select Category"
                   width="100%"
-                
                 />
               </FormControl>
 
-            {formData.category !== "Event Hall" && (
+              {formData.category !== "Event Hall" && (
                 <FormControl isRequired>
-                <FormLabel mt={4}>Type of Property</FormLabel>
-                <CustomSelectField
-                  value={formData.propertyType}
-                  handleChange={value => setFormData(prev => ({ ...prev, propertyType: String(value) }))}
-                  data={PROPERTY_TYPES}
-                  itemValueKey="value"
-                  itemLabelKey="label"
-                  placeholder="Type of Property"
-                  width="100%"
-             
-                />
-              </FormControl>
-            )}
+                  <FormLabel mt={4}>Type of Property</FormLabel>
+                  <CustomSelectField
+                    value={formData.property_type}
+                    handleChange={(value: string | number) => {
+                      setFormData(prev => ({ ...prev, property_type: String(value) }));
+                    }}
+                    data={PROPERTY_TYPES}
+                    itemValueKey="value"
+                    itemLabelKey="label"
+                    placeholder="Type of Property"
+                    width="100%"
+                  />
+                </FormControl>
+              )}
 
               {formData.category === 'Event Hall' ? (
                 <FormControl isRequired>
@@ -207,7 +178,6 @@ const SearchForm = React.memo(() => {
                     itemLabelKey="label"
                     placeholder="Select capacity"
                     width="100%"
-              
                   />
                 </FormControl>
               ) : (
@@ -226,7 +196,6 @@ const SearchForm = React.memo(() => {
                     itemLabelKey="label"
                     placeholder="Select purpose"
                     width="100%"
-                 
                   />
                 </FormControl>
               )}
@@ -246,7 +215,6 @@ const SearchForm = React.memo(() => {
                   itemLabelKey="label"
                   placeholder="Select state"
                   width="100%"
-               
                 />
               </FormControl>
 
@@ -292,8 +260,8 @@ const SearchForm = React.memo(() => {
                 <FormLabel mt={4}>Budget Range (₦)</FormLabel>
                 <SimpleGrid columns={2} spacing={2}>
                   <Input
-                    name="minBudget"
-                    value={formData.minBudget}
+                    name="min_budget"
+                    value={formData.min_budget}
                     onChange={handleChange}
                     placeholder="Min"
                     type="number"
@@ -301,8 +269,8 @@ const SearchForm = React.memo(() => {
                     _focus={{ border: "none", boxShadow: "md" }}
                   />
                   <Input
-                    name="maxBudget"
-                    value={formData.maxBudget}
+                    name="max_budget"
+                    value={formData.max_budget}
                     onChange={handleChange}
                     placeholder="Max"
                     type="number"
@@ -315,8 +283,8 @@ const SearchForm = React.memo(() => {
               <FormControl isRequired>
                 <FormLabel mt={4}>Full Name</FormLabel>
                 <Input
-                  name="lastName"
-                  value={formData.lastName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
                   _focus={{ border: "none", boxShadow: "md" }}
@@ -330,19 +298,20 @@ const SearchForm = React.memo(() => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="@email.com"
+                  placeholder="@mail.com"
                   type="email"
                   _focus={{ border: "none", boxShadow: "md" }}
                   bg='white'
                 />
               </FormControl>
+
               <FormControl isRequired>
                 <FormLabel mt={4}>WhatsApp Number</FormLabel>
                 <Input
                   name="whatsapp"
                   value={formData.whatsapp}
                   onChange={handleChange}
-                  placeholder="e.g. +234XXXXXXXXXX"
+                  placeholder="Whatsapp number"
                   type="tel"
                   _focus={{ border: "none", boxShadow: "md" }}
                   bg='white'

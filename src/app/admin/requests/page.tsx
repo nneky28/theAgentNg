@@ -44,11 +44,11 @@ import {
 import { ChevronDownIcon, ViewIcon } from "@chakra-ui/icons";
 import { FiBell } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
+import { formatPrice, formatTitleCase } from "@/utils/Method";
 
 interface SearchRequest {
   id: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   whatsapp: string;
   email: string;
   state: string;
@@ -159,17 +159,17 @@ export default function AdminRequestsPage() {
         agent_id: agent.id,
         request_id: request.id,
         title: "New Property Request",
-        message: `${request.first_name} ${request.last_name} is looking for ${request.property_type} in ${request.city}, ${request.state}`,
+        message: `${request.name} is looking for ${formatTitleCase(request.category)}, ${request.property_type} in ${request.city}, ${request.state}`,
         type: "property_request",
         request_data: {
-          client_name: `${request.first_name} ${request.last_name}`,
+          client_name: `${request.name}`,
           whatsapp: request.whatsapp,
           email: request.email,
           location: `${request.city}, ${request.state}`,
           area: request.area,
           property_type: request.property_type,
           purpose: request.purpose,
-          budget: `₦${request.min_budget} - ₦${request.max_budget}`,
+          budget: `${formatPrice(request.min_budget)} - ${formatPrice(request.max_budget)}`,
           category: request.category,
         },
         is_read: false,
@@ -213,7 +213,7 @@ export default function AdminRequestsPage() {
 
   const filteredRequests = requests.filter(
     (request) =>
-      `${request.first_name} ${request.last_name}`
+      `${request.name}`
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
       request.whatsapp.includes(searchTerm) ||
@@ -290,7 +290,7 @@ export default function AdminRequestsPage() {
                 <Flex justify="space-between" align="start">
                   <Box flex="1">
                     <Text fontWeight="600" fontSize="lg" mb={1}>
-                      {request.first_name} {request.last_name}
+                      {request.name}
                     </Text>
                     <Text fontSize="sm" color="gray.600">
                       {request.whatsapp}
@@ -308,21 +308,17 @@ export default function AdminRequestsPage() {
 
                 <Stack spacing={2} fontSize="sm">
                   <HStack justify="space-between">
-                    {/* <Text color="gray.600">Category:</Text> */}
                     <Text fontWeight="500">{request.category}</Text>
                   </HStack>
                   <HStack justify="space-between">
-                    {/* <Text color="gray.600">Location:</Text> */}
                     <Text fontWeight="500">
                       {request.city}, {request.state}
                     </Text>
                   </HStack>
                   <HStack justify="space-between">
-                    {/* <Text color="gray.600">Property:</Text> */}
                     <Text fontWeight="500">{request.property_type}</Text>
                   </HStack>
                   <HStack justify="space-between">
-                    {/* <Text color="gray.600">Date:</Text> */}
                     <Text>
                       {new Date(request.created_at).toLocaleDateString()}
                     </Text>
@@ -395,16 +391,13 @@ export default function AdminRequestsPage() {
                           : "purple.100"
                       }
                     >
-                      {request.category === "Properties To Let"
-                        ? "To Let"
-                        : request.category === "Properties For Sale"
-                        ? "For Sale"
-                        : "Short Let"}
+                      {request.category === "Properties To Let" ? "To Let" : request.category === "Properties For Sale" ? "For Sale" : request.category === "Short Let Apartment" ? "Short Let" : `${request.category}`
+                        }
                     </Badge>
                   </Td>
                   <Td>{`${request.city}, ${request.state}`}</Td>
                   <Td fontWeight="500">
-                    {request.first_name} {request.last_name}
+                    {request.name}
                   </Td>
                   <Td>{request.whatsapp}</Td>
                   <Td>
@@ -624,6 +617,7 @@ export default function AdminRequestsPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
     </Container>
   );
 }

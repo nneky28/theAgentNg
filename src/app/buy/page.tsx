@@ -55,6 +55,7 @@ const BuyPropertyPage = () => {
         .select("*")
         .eq("category", "Properties For Sale")
         .eq("is_published", true)
+        // .eq('is_featured', true)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -70,6 +71,8 @@ const BuyPropertyPage = () => {
       setLoading(false);
     }
   };
+
+  console.log("All Properties:", properties);
 
   const resetFilters = () => {
     setFilters({

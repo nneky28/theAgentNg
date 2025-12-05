@@ -136,7 +136,7 @@ const AboutUsPage = () => {
             <Text color={primaryColor} fontWeight="bold">OUR PURPOSE</Text>
             <Heading as="h2" size="xl">Mission & Values</Heading>
             <Text fontSize="lg" maxW="800px" color="gray.600">
-              Our mission is to make property transactions simple, transparent, and trustworthy for every Nigerian.
+              Our goal is to make property transactions simple, transparent, and trustworthy for every Nigerian.
             </Text>
           </VStack>
 
