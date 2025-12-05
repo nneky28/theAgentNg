@@ -17,7 +17,7 @@ const Footer = () => {
               <Image src="/images/L1.png" alt="TheAgent Logo" w="60px" mx={['auto', 'unset']} />
             </Box>
             <Text fontSize="sm" maxW={'400px'}>
-              Nigeria&apos;s latest network of real estate agents. Our mission is to help you find the right property, the easy way.
+              Nigeria&apos;s latest network of real estate agents. Our goal is to help you find the right property, the easy way.
             </Text>
             <HStack spacing={2} justify={['center', 'flex-start']}>
               <IconButton 
@@ -62,14 +62,14 @@ const Footer = () => {
           <Stack align={['center', 'flex-start']} fontSize="sm">
             <Text fontWeight="500" mb={2}>Contact</Text>
             <Link href="mailto:info@theagent.ng">info@theagent.ng</Link>
-            <Link href="tel:+2341234567890">+234 123 456 7890</Link>
-            <Text>123 Main Street, Lagos, Nigeria</Text>
+            <Link href="tel:+2348053034767">+234 8053034767</Link>
+            <Text>49a Oyibo Adjahor Street, Lekki Phase 1, Lagos.</Text>
           </Stack>
         </Flex>
         
         <Box borderTopWidth={1} borderColor="gray.700" pt={5} mt={10}>
           <Text textAlign="center" fontSize="sm">
-            &copy; {new Date().getFullYear()} TheAgent. All rights reserved.
+            &copy; {new Date().getFullYear()} The Agent Ng. All rights reserved.
           </Text>
         </Box>
       </Container>

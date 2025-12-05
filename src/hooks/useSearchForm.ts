@@ -1,87 +1,139 @@
-// hooks/useSearchForm.ts
-
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { submitSearchRequest } from '@/utils/searchApi';
-import { sendSearchRequestEmails } from '@/utils/searchEmailUtils';
-import { SearchFormData } from '@/types';
+import { useState, FormEvent } from 'react';
 import { useToast } from '@chakra-ui/react';
+import { sendClientAcknowledgment, sendAdminNotification } from '@/lib/emailService';
+import { formatTitleCase } from '@/utils/Method';
 
-interface UseSearchFormOptions {
+interface UseSearchFormProps {
   onSuccessMessage?: string;
   onErrorMessage?: string;
+  onSuccess?: () => void; 
 }
 
-export const useSearchForm = (options?: UseSearchFormOptions) => {
+export function useSearchForm({ onSuccessMessage, onErrorMessage, onSuccess }: UseSearchFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [formKey, setFormKey] = useState(0);
   const toast = useToast();
 
-  const mutation = useMutation({
-    mutationFn: submitSearchRequest,
-    onSuccess: async (response, variables) => {
-      // Send emails after successful API submission
-      await sendSearchRequestEmails(variables);
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-      // Show success message
-      const message = options?.onSuccessMessage || 'Your request has been submitted successfully!';
+    try {
+      const formElement = e.currentTarget;
+      
+      // Get all input values directly from the form
+      const formData = new FormData(formElement);
+      
+      // Convert FormData to a plain object
+      const data: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        data[key] = value as string;
+      });
+
+      const requiredFields = ['name', 'whatsapp', 'email', 'state', 'city', 'property_type', 'min_budget', 'max_budget', 'category'];
+      const missingFields = requiredFields.filter(field => !data[field]);
+      
+      if (missingFields.length > 0) {
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+
+      // Submit to API
+      const response = await fetch('/api/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Failed to submit request');
+      }
+
+      try {
+        await sendClientAcknowledgment({
+          name: data.name,
+          email: data.email,
+          property_type: data.property_type || '',
+          state: data.state,
+          city: data.city,
+          category: `${formatTitleCase(data.category)}`,
+        });
+
+        await sendAdminNotification({
+          name: data.name,
+          whatsapp: data.whatsapp,
+          email: data.email,
+          property_type: data.property_type || '',
+          state: data.state,
+          city: data.city,
+          min_budget: data.min_budget,
+          max_budget: data.max_budget,
+          area: data.area,
+          purpose: data.purpose,
+          capacity: data.capacity,
+          category: `${formatTitleCase(data.category)}`,
+        });
+
+      } catch (emailError) {
+        toast({
+          title: 'Request Submitted',
+          description: `${emailError}`,
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        });
+        
+        // Reset form even if emails failed
+        formElement.reset();
+        setFormKey(prev => prev + 1);
+        
+        // Reset parent component state (CustomSelectFields)
+        if (onSuccess) {
+          onSuccess();
+        }
+        
+        setIsLoading(false);
+        return;
+      }
+
+      // Show success message only if emails sent successfully
       toast({
-        title: 'Request submitted successfully!',
-        description: 'We\'ll get back to you within a week with property matches.',
+        title: 'Success!',
+        description: onSuccessMessage || 'Your request has been submitted successfully!',
         status: 'success',
         duration: 5000,
         isClosable: true,
       });
 
-      // Reset form by changing key
-      setFormKey((prev) => prev + 1);
-    },
-    onError: (error: any) => {
-      console.error('Submission error:', error);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        options?.onErrorMessage ||
-        'Something went wrong. Please try again.';
+      // Reset form
+      formElement.reset();
+      setFormKey(prev => prev + 1);
+      
+      // Reset parent component state (CustomSelectFields)
+      if (onSuccess) {
+        onSuccess();
+      }
+
+    } catch (error: any) {
+      console.error('❌ Form submission error:', error);
       toast({
-        title: 'Error submitting request',
-        description: errorMessage,
+        title: 'Error',
+        description: error.message || onErrorMessage || 'Something went wrong. Please try again.',
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.currentTarget);
-    const data: SearchFormData = {
-      firstName: formData.get('firstName') as string,
-      lastName: formData.get('lastName') as string,
-      email: formData.get('email') as string,
-      whatsapp: formData.get('whatsapp') as string,
-      state: formData.get('state') as string,
-      city: formData.get('city') as string,
-      area: formData.get('area') as string,
-      propertyType: formData.get('propertyType') as string,
-      purpose: formData.get('purpose') as string,
-      condition: formData.get('condition') as string,
-      minBudget: formData.get('minBudget') as string,
-      maxBudget: formData.get('maxBudget') as string,
-      capacity: formData.get('capacity') as string,
-      category: formData.get('category') as string,
-    };
-
-    mutation.mutate(data);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
-    formKey,
     handleSubmit,
-    isLoading: mutation.isPending,
-    isError: mutation.isError,
-    isSuccess: mutation.isSuccess,
-    error: mutation.error,
+    isLoading,
+    formKey,
   };
-};
+}

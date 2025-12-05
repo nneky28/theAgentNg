@@ -8,7 +8,6 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  StatHelpText,
   Icon,
   Flex,
   Spinner,
@@ -30,6 +29,7 @@ import { FiUsers, FiMapPin, FiTrendingUp, FiStar } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
 import { formatPrice } from "@/utils/Method";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { colors } from "@/utils/color";
 
 interface Stats {
   totalProperties: number;
@@ -48,12 +48,20 @@ interface RecentProperty {
   is_published: boolean;
 }
 
-
-
-const StatCard = ({ icon, label, value, helpText, color }: any) => (
+const StatCard = ({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: any;
+  label: string;
+  value: number | string;
+  color: string;
+}) => (
   <Box
     bg="white"
-    p={6}
+    p={[4, 6]}
     borderRadius="xl"
     boxShadow="sm"
     borderWidth="1px"
@@ -61,27 +69,38 @@ const StatCard = ({ icon, label, value, helpText, color }: any) => (
   >
     <Flex justify="space-between" align="start">
       <Stat>
-        <StatLabel color="gray.600" fontSize="sm" fontWeight="500">
+        <StatLabel
+          color="gray.600"
+          fontSize="sm"
+          fontWeight="400"
+          noOfLines={1}
+        >
           {label}
         </StatLabel>
-        <StatNumber fontSize="3xl" fontWeight="bold" color="gray.800" mt={2}>
-          {value}
-        </StatNumber>
-        {helpText && (
-          <StatHelpText color="gray.500" fontSize="xs" mt={1}>
-            {helpText}
-          </StatHelpText>
-        )}
-      </Stat>
-      <Box bg={`${color}.50`} p={3} borderRadius="lg">
+        <HStack
+          justifyContent={"space-between"}
+          display={"flex"}
+          alignItems={"center"}
+          mt={2}
+        >
+          <StatNumber fontSize="3xl" fontWeight="bold" color="gray.800">
+            {value}
+          </StatNumber>
+          <Box bg={`${color}.50`} p={2} borderRadius="lg">
+            <Icon as={icon} boxSize={6} color={`${color}.500`} />
+          </Box>
+        </HStack>
+
+        {/* <Box bg={`${color}.50`} p={[1,3]} borderRadius="lg">
         <Icon as={icon} boxSize={6} color={`${color}.500`} />
-      </Box>
+      </Box> */}
+      </Stat>
     </Flex>
   </Box>
 );
 
 export default function AdminDashboardPage() {
-   const [stats, setStats] = useState<Stats>({
+  const [stats, setStats] = useState<Stats>({
     totalProperties: 0,
     totalAgents: 0,
     featuredProperties: 0,
@@ -179,49 +198,58 @@ export default function AdminDashboardPage() {
     );
   }
 
-
   return (
-    <Container maxW="container.xl" px={{ base: 4, md: 6 }}>
+    <Container maxW="container.xl" px={{ base: 1, md: 6 }}>
       <Heading mb={8} size={{ base: "md", md: "lg" }}>
         Dashboard Overview
       </Heading>
 
-      {/* Stats Grid */}
-      <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={{ base: 4, md: 6 }} mb={8}>
-        <StatCard
-          icon={FiMapPin}
-          label="Total Properties"
-          value={stats.totalProperties}
-          helpText="Active listings"
-          color="blue"
-        />
-        <StatCard
-          icon={FiUsers}
-          label="Total Agents"
-          value={stats.totalAgents}
-          helpText="Registered agents"
-          color="green"
-        />
-        <StatCard
-          icon={FiStar}
-          label="Featured"
-          value={stats.featuredProperties}
-          helpText="Featured properties"
-          color="yellow"
-        />
-        <StatCard
-          icon={FiTrendingUp}
-          label="Recent Listings"
-          value={stats.recentListings}
-          helpText="Last 30 days"
-          color="purple"
-        />
-      </SimpleGrid>
+      <Box
+        bg={colors.primary}
+        color="white"
+        p={[4, 8]}
+        // borderRadius="16px"
+        borderTopLeftRadius={"16px"}
+        borderTopRightRadius={"16px"}
+      >
+        {/* Stats Grid */}
+        <SimpleGrid
+          columns={{ base: 2, sm: 2, lg: 4 }}
+          spacing={{ base: 4, md: 6 }}
+          mb={8}
+        >
+          <StatCard
+            icon={FiMapPin}
+            label="Total Properties"
+            value={stats.totalProperties}
+            color="blue"
+          />
+          <StatCard
+            icon={FiUsers}
+            label="Total Agents"
+            value={stats.totalAgents}
+            color="green"
+          />
+          <StatCard
+            icon={FiStar}
+            label="Featured"
+            value={stats.featuredProperties}
+            color="yellow"
+          />
+          <StatCard
+            icon={FiTrendingUp}
+            label="Recent Listings"
+            value={stats.recentListings}
+            color="purple"
+          />
+        </SimpleGrid>
+      </Box>
 
       {/* Recent Properties Table/Cards */}
       <Box
         bg="white"
-        borderRadius="xl"
+        borderBottomLeftRadius={"16px"}
+        borderBottomRightRadius={"16px"}
         boxShadow="sm"
         borderWidth="1px"
         borderColor="gray.200"
@@ -271,19 +299,19 @@ export default function AdminDashboardPage() {
                           : "Short Let"}
                       </Badge>
                       <Badge>
-                          {property.is_featured ? (
-                        <Badge colorScheme="yellow" fontSize="xs">
-                          ⭐ Featured
-                        </Badge>
-                      ) : property.is_published ? (
-                        <Badge colorScheme="green" fontSize="xs">
-                          <CheckIcon boxSize={2} mr={1} /> Published
-                        </Badge>
-                      ) : (
-                        <Badge colorScheme="gray" fontSize="xs">
-                          <CloseIcon boxSize={2} mr={1} /> Draft
-                        </Badge>
-                      )}
+                        {property.is_featured ? (
+                          <Badge bg="yellow.100" fontSize="xs">
+                            ⭐ Featured
+                          </Badge>
+                        ) : property.is_published ? (
+                          <Badge bg="green.100" fontSize="xs">
+                            <CheckIcon boxSize={2} mr={1} /> Published
+                          </Badge>
+                        ) : (
+                          <Badge bg="gray.100" fontSize="xs">
+                            <CloseIcon boxSize={2} mr={1} /> Draft
+                          </Badge>
+                        )}
                       </Badge>
                     </HStack>
                   </Box>
@@ -293,14 +321,10 @@ export default function AdminDashboardPage() {
                   {/* Property Details */}
                   <VStack align="stretch" spacing={2} fontSize="sm">
                     <HStack justify="space-between">
-                      <Text color="gray.600">Price:</Text>
                       <Text fontWeight="600" color="purple.600">
                         {formatPrice(property.price)}
                       </Text>
-                    </HStack>
-                    <HStack justify="space-between">
-                      <Text color="gray.600">Date Added:</Text>
-                      <Text fontWeight="500">
+                        <Text fontWeight="500">
                         {new Date(property.created_at).toLocaleDateString()}
                       </Text>
                     </HStack>

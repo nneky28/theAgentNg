@@ -51,14 +51,8 @@ import {
 } from "@chakra-ui/icons";
 import { createClient } from "@/utils/supabase/client";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { formatPrice } from "@/utils/Method";
 
-const formatPrice = (price) => {
-  return new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-    minimumFractionDigits: 0,
-  }).format(price);
-};
 
 const AdminPropertiesPage = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -201,6 +195,7 @@ const AdminPropertiesPage = () => {
         .from("properties")
         .update({
           is_featured: !isFeatured,
+          is_published: isFeatured? true : false,
           featured_at: !isFeatured ? new Date().toISOString() : null,
         })
         .eq("id", id);

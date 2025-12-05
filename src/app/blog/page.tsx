@@ -138,7 +138,8 @@ const RealEstateBlog: React.FC = () => {
         backgroundRepeat="no-repeat"
         bgColor="#00425F"
         color={'white'}
-        h="600px"
+        minH={{ base: "500px", md: "600px" }}
+        h={{ base: "500px", md: "600px" }}
          _before={{
           content: '""',
           position: "absolute",
@@ -152,7 +153,7 @@ const RealEstateBlog: React.FC = () => {
         }}>
        
         <Container 
-        maxW="container.xl"
+          maxW="container.xl"
           py={16}
           display="flex"
           flexDirection="column"

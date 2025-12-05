@@ -10,21 +10,6 @@ export type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-export interface SearchFormData {
-  state: string;
-  city: string;
-  area: string;
-  propertyType: string;
-  purpose: string;
-  condition: string;
-  minBudget: string;
-  maxBudget: string;
-  firstName: string;
-  lastName: string;
-  whatsapp: string;
-  email: string;
-}
-
 export interface AgentFormData {
   firstName: string;
   lastName: string;
@@ -50,14 +35,12 @@ export interface SearchFormData {
   state: string;
   city: string;
   area: string;
-  propertyType: string;
+  property_type: string;
   purpose: string;
   category: string;
-  condition: string;
-  minBudget: string;
-  maxBudget: string;
-  firstName: string;
-  lastName: string;
+  min_budget: string;
+  max_budget: string;
+  name: string;
   whatsapp: string;
   email: string;
   capacity: string;

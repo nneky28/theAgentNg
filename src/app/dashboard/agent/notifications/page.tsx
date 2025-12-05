@@ -15,7 +15,7 @@ import {
   HStack,
   Button,
 } from "@chakra-ui/react";
-import { FiBell, FiCheck } from "react-icons/fi";
+import {  FiCheck } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
 import { colors } from "@/utils/color";
 
@@ -118,11 +118,7 @@ export default function NotificationsPage() {
               <CardBody>
                 <Flex justify="space-between" align="start">
                   <HStack spacing={4} flex={1}>
-                    <Icon
-                      as={FiBell}
-                      boxSize={6}
-                      color={notification.is_read ? "gray.400" : colors.primary}
-                    />
+                  
                     <VStack align="start" spacing={2} flex={1}>
                       <Heading size="sm">{notification.title}</Heading>
                       <Text color="gray.600">{notification.message}</Text>
@@ -147,21 +143,25 @@ export default function NotificationsPage() {
                         {new Date(notification.created_at).toLocaleString()}
                       </Text>
                     </VStack>
+             
                   </HStack>
                   
-                  {!notification.is_read && (
+                </Flex>
+              </CardBody>
+                   {!notification.is_read && (
                     <Button
                       size="sm"
                       leftIcon={<Icon as={FiCheck} />}
                       colorScheme="purple"
                       variant="ghost"
                       onClick={() => markAsRead(notification.id)}
+                      alignSelf={'left'}
+                      display={'flex'}
+                      justifyContent={'left'}
                     >
                       Mark as read
                     </Button>
                   )}
-                </Flex>
-              </CardBody>
             </Card>
           ))}
         </VStack>

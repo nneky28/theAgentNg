@@ -24,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { TbHomeSearch } from "react-icons/tb";
+import Pagination from "@/components/Pagination";
 
 
 
@@ -75,7 +76,7 @@ const ShortLetPage = () => {
     );
   }
 
-  console.log("Filtered Properties:", properties);
+
   return (
     <Box>
       <Navbar />
@@ -138,14 +139,7 @@ const ShortLetPage = () => {
         </Container>
       </Box>
       
-      <Box
-        bg="white"
-        p={10}
-        borderRadius="lg"
-        shadow="md"
-        textAlign="center"
-        py={12}
-      >
+     <Container maxW="container.xl" py={10}>
         {properties.length === 0 ? (
           <>
             <Heading as="h3" size="md" mb={4}>
@@ -158,15 +152,18 @@ const ShortLetPage = () => {
           </>
         ) : (
           <Container maxW="container.xl" py={8}>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
               {properties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </SimpleGrid>
           </Container>
         )}
-      </Box>
+      </Container>
 
+   {properties.length > 0 && (
+        <Pagination/>
+      )}
       <SearchForm />
       <Footer />
     </Box>

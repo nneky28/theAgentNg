@@ -29,10 +29,15 @@ import { createClient } from '@/utils/supabase/client';
 import { nigerianStates } from '@/utils/nigerian-states';
 import { FiX } from 'react-icons/fi';
 import { colors } from '@/utils/color';
+import { useDrawer } from '../../layout';
+
 
 const SettingsPage = () => {
   const toast = useToast();
   const accentColor = colors.primary;
+  
+  // Get drawer control from context
+  const { openDrawer } = useDrawer();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -149,18 +154,24 @@ const SettingsPage = () => {
 
       if (error) throw error;
 
-
-
       toast({
         title: 'Settings updated successfully',
+        description: 'Redirecting to home...',
         status: 'success',
-        duration: 3000,
+        duration: 2000,
       });
 
-      // Reload the page after a short delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      const isMobile = window.innerWidth < 768;
+      
+      if (isMobile) {
+        setTimeout(() => {
+          openDrawer();
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
 
     } catch (error) {
       console.error('Error updating settings:', error);
