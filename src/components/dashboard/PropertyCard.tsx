@@ -275,7 +275,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             </HStack>
             <HStack spacing={1}>
               <Text fontSize="sm">📏</Text>
-              <Text fontSize="sm" fontWeight="medium">{property.sqft} sqft</Text>
+              <Text fontSize="sm" fontWeight="medium">{property.sqft} sqm</Text>
             </HStack>
           </HStack>
 
@@ -348,7 +348,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               </FormControl>
 
               <FormControl>
-                <FormLabel>Sqft</FormLabel>
+                <FormLabel>Sqm</FormLabel>
                 <NumberInput
                   value={String(form.sqft)}
                   onChange={(value) => handleFormChange('sqft', Number(value || 0))}

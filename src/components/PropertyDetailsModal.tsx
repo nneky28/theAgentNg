@@ -212,7 +212,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               </Box>
               <Box textAlign="center">
                 <Text fontWeight="bold">{property.sqft || 0}</Text>
-                <Text color="gray.600" fontSize="sm">Sq Ft</Text>
+                <Text color="gray.600" fontSize="sm">Sqm</Text>
               </Box>
             </Flex>
           </Flex>

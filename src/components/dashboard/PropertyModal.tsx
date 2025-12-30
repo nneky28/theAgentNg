@@ -64,6 +64,8 @@ const PROPERTY_FEATURES = [
   "Modern Amenities",
   "Water Heater",
   "Wi-Fi",
+  "Service Charge",
+  "24/7 Light",
 ];
 
 const MIN_IMAGES = 5;
@@ -83,7 +85,7 @@ interface PropertyFormData {
   images: File[];
   state: string;
   city: string;
-  capacity?: string; // <-- Add this line
+  capacity?: string;
 }
 
 interface PropertyModalProps {
@@ -176,7 +178,7 @@ const createProperty = async (data: any) => {
         owner_id: user.id,
         status: "active",
         views: 0,
-        capacity: data.capacity || null, // <-- Add this line
+        capacity: data.capacity || null,
       },
     ])
     .select()
@@ -214,7 +216,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     images: [],
     state: "",
     city: "",
-    capacity: "", // <-- Add this line
+    capacity: "",
   });
 
   // React Query mutation
@@ -248,7 +250,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         images: [],
         state: "",
         city: "",
-        capacity: "", // <-- Add this line
+        capacity: "",
       });
       setUploadProgress(0);
 
@@ -350,7 +352,6 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       imageFiles: formData.images, // Pass File objects directly
       state: formData.state,
       city: formData.city,
-      capacity: formData.capacity || null, // <-- Add this line
     };
 
     // Simulate upload progress
@@ -440,9 +441,9 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 </FormControl>
               )}
 
-                {formData.category === 'Event Hall' && (
+              {formData.category === 'Event Hall' && (
                 <FormControl isRequired>
-                  <FormLabel mt={4}>Capacity</FormLabel>
+                  <FormLabel>Capacity</FormLabel>
                   <CustomSelectField
                     value={formData.capacity}
                     handleChange={(value: string | number) => {
@@ -460,9 +461,9 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                     itemLabelKey="label"
                     placeholder="Select capacity"
                     width="100%"
-              
                   />
-                </FormControl>)}
+                </FormControl>
+              )}
 
               <FormControl isRequired>
                 <FormLabel>State</FormLabel>
@@ -569,7 +570,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel fontSize="sm">Sq Ft</FormLabel>
+                  <FormLabel fontSize="sm">Sqm</FormLabel>
                   <NumberInput min={0} value={formData.sqft}>
                     <NumberInputField
                       name="sqft"
