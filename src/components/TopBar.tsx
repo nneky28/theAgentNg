@@ -27,6 +27,7 @@ import { FiBell, FiEdit, FiTrash2, FiLogOut, FiMenu } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { colors } from "@/utils/color";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface TopBarProps {
   setDrawerOpen: (open: boolean) => void;
@@ -39,6 +40,7 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
   const [userEmail, setUserEmail] = useState("");
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLogoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     fetchUserAndNotifications();
@@ -266,7 +268,7 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
               <MenuItem
                 icon={<FiLogOut />}
                 fontSize="14px"
-                onClick={handleSignOut}
+                onClick={() => setLogoutConfirmOpen(true)}
               >
                 Sign Out
               </MenuItem>
@@ -357,6 +359,17 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Logout Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isLogoutConfirmOpen}
+        onClose={() => setLogoutConfirmOpen(false)}
+        onConfirm={handleSignOut}
+        title="Confirm Logout"
+        message="Are you sure you want to sign out?"
+        confirmText="Sign Out"
+        cancelText="Cancel"
+      />
     </>
   );
 };

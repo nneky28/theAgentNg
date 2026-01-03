@@ -105,7 +105,7 @@ const PropertyCard = ({ property }: { property: Property }) => {
             </Text>
           </HStack>
          <Text color="#724B9B" fontWeight="bold" fontSize="xl" textAlign={'left'}>
-              {formatPrice(property.price)}
+              {formatPrice(property.price, property.currency || 'NGN')}
             </Text>
           <Flex
             justify="space-between"

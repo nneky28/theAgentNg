@@ -166,7 +166,7 @@ const FeaturedListings = () => {
                         fontSize="lg"
                         color={colors.primary}
                       >
-                        {formatPrice(property.price)}
+                        {formatPrice(property.price, (property.currency as 'NGN' | 'USD') || 'NGN')}
                       </Text>
                       <Badge
                         bg={
@@ -256,7 +256,7 @@ const FeaturedListings = () => {
                         fontSize="lg"
                         color={colors.primary}
                       >
-                        {formatPrice(property.price)}
+                        {formatPrice(property.price, (property.currency as 'NGN' | 'USD') || 'NGN')}
                       </Text>
                       <Flex justifyContent="space-between" alignItems="center">
                         <Badge

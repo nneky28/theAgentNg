@@ -142,15 +142,15 @@ const OnboardingPage: React.FC = () => {
   };
 
   const handleCityChange = (values: string[]): void => {
-    if (values.length <= 3) {
+    if (values.length <= 5) {
       setFormData((prev) => ({
         ...prev,
         cities: values,
       }));
     } else {
       toast({
-        title: "Maximum 3 cities allowed",
-        description: "You can only select up to 3 cities",
+        title: "Maximum 5 cities allowed",
+        description: "You can only select up to 5 cities",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -394,7 +394,7 @@ const OnboardingPage: React.FC = () => {
                         name="whatsappNo"
                         value={formData.whatsappNo}
                         onChange={handleInputChange}
-                        placeholder="+234 xxx xxx xxxx"
+                        placeholder="Enter your WhatsApp number"
                         size="lg"
                         borderRadius="xl"
                         _focus={{
@@ -444,7 +444,7 @@ const OnboardingPage: React.FC = () => {
 
                     <FormControl>
                       <FormLabel fontWeight="600" color="gray.700">
-                        City (You can select up to 3)
+                        City (You can select up to 5)
                       </FormLabel>
                       
                       {formData.cities.length > 0 && (
@@ -516,7 +516,7 @@ const OnboardingPage: React.FC = () => {
                       </CheckboxGroup>
                       
                       <Text fontSize="xs" color="gray.500" mt={2}>
-                        {formData.cities.length}/3 cities selected 
+                        {formData.cities.length}/5 cities selected 
                         {formData.cities.length === 0 ? " (Optional)" : ""}
                       </Text>
                     </FormControl>

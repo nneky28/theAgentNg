@@ -100,6 +100,9 @@ export interface Property {
   updated_at?: string;
   agent_id?: string;
   views?: number;
+  currency?: 'NGN' | 'USD' | string;
+  toilets?: number;
+  video_link?: string | null;
 }
 
 export interface SearchRequest {

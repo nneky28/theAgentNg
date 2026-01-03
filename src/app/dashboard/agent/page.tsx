@@ -192,6 +192,58 @@ const AgentDashboard = () => {
     }
   }, [userEmail, toast, onPropertyClose]);
 
+  const handleEditProperty = async (property: any) => {
+    const supabase = createClient();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .update({
+          state: property.state,
+          city: property.city,
+          price: property.price,
+          currency: property.currency,
+          bedrooms: property.bedrooms,
+          bathrooms: property.bathrooms,
+          toilets: property.toilets,
+          sqft: property.sqft,
+          images: property.images,
+          video_link: property.video_link,
+          title: property.title,
+        })
+        .eq('id', property.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Updated!",
+        description: "Property has been updated successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      await fetchProperties(userEmail);
+    } catch (error) {
+      console.error('Error updating property:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update property.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewProperty = (property: any) => {
+    // Navigate to property detail page or show detail modal
+    router.push(`/property/${property.id}`);
+  };
+
   const handleDeleteProperty = async (propertyId: string) => {
     const supabase = createClient();
     setLoading(true);
@@ -239,7 +291,8 @@ const AgentDashboard = () => {
   }
 
   return (
-    <Box minH="100vh" bg={bg}>
+    <Box minH="100vh" >
+
       <Box bg={accentColor} color="white" py={8} borderRadius="16px">
         <DashboardHeader 
           userName={userName}
@@ -251,7 +304,7 @@ const AgentDashboard = () => {
         </Container>
       </Box>
 
-      <Container maxW="container.xl" py={10}>
+      <Container maxW="container.2xl" py={10}>
         <VStack spacing={8} align="stretch">
           <Text 
             fontSize="md" 
@@ -362,7 +415,7 @@ const AgentDashboard = () => {
         </VStack>
       </Container>
 
-      <Container maxW="container.xl" py={8} id='properties'>
+      <Container maxW="container.2xl" py={8} id='properties'>
         <Card bg={cardBg} shadow="lg" borderRadius="xl">
           <CardHeader>
             <Flex justify="space-between" align="center">
@@ -408,8 +461,9 @@ const AgentDashboard = () => {
                     <PropertyCard 
                       key={property.id} 
                       property={property}
-                      onEdit={(property) => console.log('Edit property:', property)}
-                      onView={(property) => console.log('View property:', property)}
+                      onEdit={handleEditProperty}
+                      onView={handleViewProperty}
+                      onDelete={handleDeleteProperty}
                       actions={
                         <Flex gap={2}>
                           <Button
@@ -417,7 +471,7 @@ const AgentDashboard = () => {
                             variant="ghost"
                             colorScheme="purple"
                             leftIcon={<FiEdit />}
-                            onClick={() => console.log('Edit property:', property)}
+                            onClick={() => handleEditProperty(property)}
                           >
                             Edit
                           </Button>

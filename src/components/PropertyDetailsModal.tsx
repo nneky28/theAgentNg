@@ -18,8 +18,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { FaCheck, FaWhatsapp } from "react-icons/fa";
+import { FaCheck, FaWhatsapp, FaPlay } from "react-icons/fa";
 import { Property } from "../types";
+import { Icon } from "@chakra-ui/react";
 
 
 interface PropertyDetailsModalProps {
@@ -196,7 +197,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
           <Flex justify="space-between" mb={6} direction={["column", "row"]} gap={4}>
             <Box>
               <Text fontSize="2xl" fontWeight="bold" color="#724B9B">
-                {formatPrice(property.price)}
+                {formatPrice(property.price, property.currency || 'NGN')}
               </Text>
             
             </Box>
@@ -209,6 +210,10 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               <Box textAlign="center">
                 <Text fontWeight="bold">{property.baths || property.bathrooms || 0}</Text>
                 <Text color="gray.600" fontSize="sm">Bathrooms</Text>
+              </Box>
+              <Box textAlign="center">
+                <Text fontWeight="bold">{property.toilets || 0}</Text>
+                <Text color="gray.600" fontSize="sm">Toilets</Text>
               </Box>
               <Box textAlign="center">
                 <Text fontWeight="bold">{property.sqft || 0}</Text>
@@ -242,6 +247,23 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
             </Box>
           )}
 
+          {property.video_link && (
+            <Box mb={6}>
+  
+              <Button
+                as="a"
+                href={property.video_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                leftIcon={<Icon as={FaPlay} />}
+                colorScheme="purple"
+                w="full"
+              >
+                Watch Property Video
+              </Button>
+            </Box>
+          )}
+
           {property.amenities && Array.isArray(property.amenities) && property.amenities.length > 0 && (
             <Box mb={6}>
               <Heading size="md" mb={3}>
@@ -263,15 +285,20 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               Contact Agent
             </Heading>
             <Text mb={3} fontSize="sm" color="gray.600">
-              Interested in this property? Get in touch with our agent.
+              Interested in this property? Get in touch with the agent.
             </Text>
-            <Button 
-              leftIcon={<FaWhatsapp />} 
-              colorScheme="green" 
-              w="full"
-              as="a"
-              href={`https://wa.me/${property.agent?.phone || '2348000000000'}?text=Hi, I'm interested in ${property.title}`}
-              target="_blank"
+            <Button
+              colorScheme="green"
+              size="lg"
+              width="full"
+              onClick={() => {
+                const propertyUrl = `${window.location.origin}/property/${property.id}`;
+                const message = `Hi, I'm interested in this property: ${property.title}%0A%0AProperty Link: ${propertyUrl}`;
+                window.open(
+                  `https://wa.me/?text=${message}`,
+                  "_blank"
+                );
+              }}
             >
               Chat on WhatsApp
             </Button>

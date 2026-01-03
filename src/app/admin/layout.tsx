@@ -33,6 +33,7 @@ import { FaHome, FaUsers, FaBuilding, FaSignOutAlt } from "react-icons/fa";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { FiBell } from "react-icons/fi";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 
 interface UserData {
@@ -85,6 +86,7 @@ export default function AdminLayout({
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showWarning, setShowWarning] = useState(false);
   const [countdown, setCountdown] = useState(60);
+  const [isLogoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   
   const router = useRouter();
   const pathname = usePathname();
@@ -339,7 +341,7 @@ export default function AdminLayout({
             </Text>
             <Button
               leftIcon={<FaSignOutAlt />}
-              onClick={handleLogout}
+              onClick={() => setLogoutConfirmOpen(true)}
               colorScheme="red"
               variant="ghost"
               size="sm"
@@ -461,6 +463,17 @@ export default function AdminLayout({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Logout Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={isLogoutConfirmOpen}
+        onClose={() => setLogoutConfirmOpen(false)}
+        onConfirm={handleLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to log out?"
+        confirmText="Logout"
+        cancelText="Cancel"
+      />
     </>
   );
 }
