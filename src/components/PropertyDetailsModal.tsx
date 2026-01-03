@@ -18,7 +18,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { FaCheck, FaWhatsapp, FaPlay } from "react-icons/fa";
+import { FaCheck,FaPlay } from "react-icons/fa";
 import { Property } from "../types";
 import { Icon } from "@chakra-ui/react";
 

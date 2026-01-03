@@ -24,8 +24,8 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { TbHomeSearch } from "react-icons/tb";
-import Pagination from "@/components/Pagination";
 import { usePagination } from "@/hooks/usePagination";
+import Pagination from "@/components/Pagination";
 
 
 const ShortLetPage = () => {
@@ -177,11 +177,11 @@ const ShortLetPage = () => {
         )}
       </Container>
 
-   {pagination.totalPages > 1 && (
+    {pagination.totalPages > 1 && (
         <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          onPageChange={pagination.goToPage}
+          // currentPage={pagination.currentPage}
+          // totalPages={pagination.totalPages}
+          // onPageChange={pagination.goToPage}
         />
       )}
       <SearchForm />

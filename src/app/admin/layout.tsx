@@ -470,7 +470,7 @@ export default function AdminLayout({
         onClose={() => setLogoutConfirmOpen(false)}
         onConfirm={handleLogout}
         title="Confirm Logout"
-        message="Are you sure you want to log out?"
+        description="Are you sure you want to log out?"
         confirmText="Logout"
         cancelText="Cancel"
       />

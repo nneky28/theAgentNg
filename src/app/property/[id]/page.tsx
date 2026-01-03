@@ -13,14 +13,12 @@ import {
   Badge,
   HStack,
   VStack,
-  Flex,
   Button,
   Spinner,
   Center,
   Icon,
-  IconButton,
 } from "@chakra-ui/react";
-import { FaBed, FaBath, FaRuler, FaMapMarkerAlt, FaPlay, FaToilet } from "react-icons/fa";
+import { FaBed, FaBath, FaRuler, FaMapMarkerAlt, FaToilet } from "react-icons/fa";
 import { FiArrowLeft } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
 import Navbar from "@/components/Navbar";
