@@ -34,7 +34,6 @@ import {
   Progress,
   RadioGroup,
   Radio,
-  Select,
 } from "@chakra-ui/react";
 import { FiCamera, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";

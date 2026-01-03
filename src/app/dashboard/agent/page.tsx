@@ -44,7 +44,7 @@ const AgentDashboard = () => {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
-  const bg = useColorModeValue('gray.50', 'gray.900');
+
   const cardBg = useColorModeValue('white', 'gray.800');
   const accentColor = colors.primary;
 

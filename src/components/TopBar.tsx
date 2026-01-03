@@ -366,7 +366,7 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
         onClose={() => setLogoutConfirmOpen(false)}
         onConfirm={handleSignOut}
         title="Confirm Logout"
-        message="Are you sure you want to sign out?"
+        description="Are you sure you want to sign out?"
         confirmText="Sign Out"
         cancelText="Cancel"
       />
