@@ -40,16 +40,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-// Get this from https://dashboard.emailjs.com/admin/account
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
-const CLIENT_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_CLIENT_TEMPLATE!;
-const ADMIN_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_ADMIN_TEMPLATE!;
 
-  console.log('EmailJS public key:', EMAILJS_PUBLIC_KEY);
-console.log('EmailJS service ID:', EMAILJS_SERVICE_ID);
-console.log('Client template ID:', CLIENT_TEMPLATE_ID);
-console.log('Admin template ID:', ADMIN_TEMPLATE_ID); 
   return (
     <html lang="en" className={`${raleway.variable} ${montserrat.variable}`}>
       <body

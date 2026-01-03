@@ -16,6 +16,7 @@ import { colors } from "@/utils/color";
 import { BiLogOutCircle } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface SidebarProps {
   sidebarItems: { label: string; path: string; badge?: number }[];
@@ -46,6 +47,7 @@ const Sidebar = ({
   const accentColor = colors.primary;
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLogoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     fetchUserProfile();
@@ -341,7 +343,7 @@ const Sidebar = ({
           right="0"
           mb={8}
           h={"20vh"}
-          onClick={handleSignOut}
+          onClick={() => setLogoutConfirmOpen(true)}
         >
           <Box
             display="flex"
@@ -362,6 +364,17 @@ const Sidebar = ({
             Sign Out
           </Box>
         </Box>
+
+        {/* Logout Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={isLogoutConfirmOpen}
+          onClose={() => setLogoutConfirmOpen(false)}
+          onConfirm={handleSignOut}
+          title="Confirm Logout"
+          message="Are you sure you want to sign out?"
+          confirmText="Sign Out"
+          cancelText="Cancel"
+        />
       </Box>
     </Box>
   );

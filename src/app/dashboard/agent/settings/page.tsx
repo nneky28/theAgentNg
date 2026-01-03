@@ -117,11 +117,11 @@ const SettingsPage = () => {
   };
 
   const handleCityChange = (values: string[]) => {
-    if (values.length <= 3) {
+    if (values.length <= 5) {
       setFormData(prev => ({ ...prev, cities: values }));
     } else {
       toast({
-        title: 'Maximum 3 cities allowed',
+        title: 'Maximum 5 cities allowed',
         status: 'warning',
         duration: 3000,
       });
@@ -247,7 +247,7 @@ const SettingsPage = () => {
               </FormControl>
 
               <FormControl>
-                <FormLabel>Cities (Select up to 3)</FormLabel>
+                <FormLabel>Cities (Select up to 5)</FormLabel>
 
                 {formData.cities.length > 0 && (
                   <Wrap spacing={2} mb={3}>
@@ -302,7 +302,7 @@ const SettingsPage = () => {
                           value={city}
                           colorScheme="purple"
                           isDisabled={
-                            !formData.cities.includes(city) && formData.cities.length >= 3
+                            !formData.cities.includes(city) && formData.cities.length >= 5
                           }
                         >
                           {city}
@@ -313,7 +313,7 @@ const SettingsPage = () => {
                 </CheckboxGroup>
 
                 <Text fontSize="xs" color="gray.500" mt={2}>
-                  {formData.cities.length}/3 cities selected
+                  {formData.cities.length}/5 cities selected
                 </Text>
               </FormControl>
 

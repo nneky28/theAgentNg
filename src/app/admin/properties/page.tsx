@@ -388,7 +388,7 @@ const AdminPropertiesPage = () => {
                       <HStack justify="space-between">
                      
                         <Text fontWeight="600" color="purple.600">
-                          {formatPrice(property.price)}
+                          {formatPrice(property.price, property.currency || 'NGN')}
                         </Text>
                              <Menu>
                         <MenuButton
@@ -510,7 +510,7 @@ const AdminPropertiesPage = () => {
                         : property?.city || property?.state || "N/A"}
                     </Td>
                     <Td fontWeight="semibold" fontSize="sm">
-                      {formatPrice(property.price)}
+                      {formatPrice(property.price, property.currency || 'NGN')}
                     </Td>
                     <Td>
                       {property.is_featured ? (

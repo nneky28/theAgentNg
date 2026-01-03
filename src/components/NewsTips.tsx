@@ -34,7 +34,7 @@ const NewsTips = () => {
   };
 
   return (
-    <Box py={12} bg="gray.50" id="news">
+    <Box py={12} bg="purple.50"  id="news">
       <Container maxW="1300px">
         <Heading as="h2" size="xl" mb={8} textAlign="center">News & Tips</Heading>
         

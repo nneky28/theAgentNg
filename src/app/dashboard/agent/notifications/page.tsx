@@ -95,7 +95,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <Container maxW="container.lg" py={8}>
+    <Container maxW="container.2xl">
       <Heading mb={8}>Notifications</Heading>
 
       {notifications.length === 0 ? (

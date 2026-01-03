@@ -257,7 +257,7 @@ const SearchForm = React.memo(() => {
               </FormControl>
 
               <FormControl isRequired>
-                <FormLabel mt={4}>Budget Range (₦)</FormLabel>
+                <FormLabel mt={4}>Budget Range</FormLabel>
                 <SimpleGrid columns={2} spacing={2}>
                   <Input
                     name="min_budget"

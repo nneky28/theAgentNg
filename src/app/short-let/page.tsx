@@ -25,7 +25,7 @@ import {
 import { useEffect, useState } from "react";
 import { TbHomeSearch } from "react-icons/tb";
 import Pagination from "@/components/Pagination";
-
+import { usePagination } from "@/hooks/usePagination";
 
 
 const ShortLetPage = () => {
@@ -62,6 +62,18 @@ const ShortLetPage = () => {
       setLoading(false);
     }
   };
+
+  const filteredProperties = properties.filter((property) => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      property.title?.toLowerCase().includes(searchLower) ||
+      property.city?.toLowerCase().includes(searchLower) ||
+      property.state?.toLowerCase().includes(searchLower)
+    );
+  });
+
+  const pagination = usePagination(filteredProperties, 12);
 
 
 
@@ -140,20 +152,24 @@ const ShortLetPage = () => {
       </Box>
       
      <Container maxW="container.xl" py={10}>
-        {properties.length === 0 ? (
+        {filteredProperties.length === 0 ? (
           <>
             <Heading as="h3" size="md" mb={4}>
               No Short Let Apartment Found
             </Heading>
             <Text color="gray.600">
-              When available, we will be adding more short let apartments to our
-              platform.
+              {searchTerm
+                ? "No properties match your search. Try different keywords."
+                : "When available, we will be adding more short let apartments to our platform."}
             </Text>
           </>
         ) : (
           <Container maxW="container.xl" py={8}>
+            <Text fontSize="lg" fontWeight="600" mb={6}>
+              {filteredProperties.length} Properties Found
+            </Text>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {properties.map((property) => (
+              {pagination.paginatedData.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </SimpleGrid>
@@ -161,8 +177,12 @@ const ShortLetPage = () => {
         )}
       </Container>
 
-   {properties.length > 0 && (
-        <Pagination/>
+   {pagination.totalPages > 1 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={pagination.goToPage}
+        />
       )}
       <SearchForm />
       <Footer />

@@ -15,8 +15,8 @@ const Home: NextPage = () => {
       <Header/>
       <SearchForm />
       <FeaturedListings />
-      <NewsTips />
       <AgentCTA />
+      <NewsTips />
       <Footer/>
     </Box>
   );

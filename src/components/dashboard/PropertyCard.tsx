@@ -8,6 +8,7 @@ import {
   VStack,
   Flex,
   Text,
+  Icon,
   HStack,
   Box,
   useColorModeValue,
@@ -25,13 +26,15 @@ import {
   Input,
   NumberInput,
   NumberInputField,
-
+  RadioGroup,
+  Radio,
   Button,
   Stack,
   useDisclosure,
 } from '@chakra-ui/react';
 import { EditIcon, AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { FiTrash2 } from 'react-icons/fi';
+import { FaToilet } from 'react-icons/fa';
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Property {
@@ -46,6 +49,9 @@ interface Property {
   views: number;
   images?: string[];
   title: string;
+  currency?: 'NGN' | 'USD' | string;
+  toilets?: number;
+  video_link?: string | null;
 }
 
 interface PropertyCardProps {
@@ -84,6 +90,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
   }, [property.images, property]);
 
   const [form, setForm] = useState({
+    title:property.title||'',
     state: property.state || '',
     city: property.city || '',
     price: property.price || 0,
@@ -92,11 +99,15 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     sqft: property.sqft || 0,
     status: property.status || 'active',
     images: property.images ? [...property.images] : [] as string[],
+    currency: property.currency || 'NGN',
+    toilets: property.toilets || 0,
+    video_link: property.video_link || '',
   });
 
   useEffect(() => {
   
     setForm({
+      title:property.title||'',
       state: property.state || '',
       city: property.city || '',
       price: property.price || 0,
@@ -105,6 +116,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       sqft: property.sqft || 0,
       status: property.status || 'active',
       images: property.images ? [...property.images] : [],
+      currency: property.currency || 'NGN',
+      toilets: property.toilets || 0,
+      video_link: property.video_link || '',
     });
   }, [property]);
 
@@ -112,6 +126,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     e.stopPropagation();
     // initialize form with current values
     setForm({
+      title:property.title||'',
       state: property.state || '',
       city: property.city || '',
       price: property.price || 0,
@@ -120,6 +135,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       sqft: property.sqft || 0,
       status: property.status || 'active',
       images: property.images ? [...property.images] : [],
+      currency: property.currency || 'NGN',
+      toilets: property.toilets || 0,
+      video_link: property.video_link || '',
     });
     onOpen();
   };
@@ -154,11 +172,14 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
       state: String(form.state).trim(),
       city: String(form.city).trim(),
       price: Number(form.price) || 0,
+      currency: form.currency || 'NGN',
       bedrooms: Number(form.bedrooms) || 0,
       bathrooms: Number(form.bathrooms) || 0,
+      toilets: Number(form.toilets) || 0,
       sqft: Number(form.sqft) || 0,
       status: form.status as Property['status'],
       images: (form.images || []).map((i) => (i || '').trim()).filter(Boolean),
+      video_link: form.video_link?.trim() || null,
     };
 
     if (onEdit) {
@@ -206,7 +227,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             aria-label="Edit property"
             icon={<EditIcon />}
             size="sm"
-            onClick={openEdit}
+            onClick={(e) => {
+              e.stopPropagation();
+              openEdit(e);
+            }}
           />
         </Tooltip>
         <Tooltip label="Delete property" hasArrow>
@@ -274,6 +298,10 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               <Text fontSize="sm" fontWeight="medium">{property.bathrooms}</Text>
             </HStack>
             <HStack spacing={1}>
+              <Icon as={FaToilet} fontSize="sm" color="gray.600" />
+              <Text fontSize="sm" fontWeight="medium">{property.toilets || 0}</Text>
+            </HStack>
+            <HStack spacing={1}>
               <Text fontSize="sm">📏</Text>
               <Text fontSize="sm" fontWeight="medium">{property.sqft} sqm</Text>
             </HStack>
@@ -296,9 +324,14 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           <ModalCloseButton />
           <ModalBody>
             <Stack spacing={3}>
-  
-
-              <FormControl>
+           <FormControl>
+                <FormLabel>Title</FormLabel>
+                <Input
+                  value={form.title}
+                  onChange={(e) => handleFormChange('title', e.target.value)}
+                />
+              </FormControl>
+            <FormControl>
                 <FormLabel>State</FormLabel>
                 <Input
                   value={form.state}
@@ -315,7 +348,17 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               </FormControl>
 
               <FormControl>
-                <FormLabel>Price (NGN)</FormLabel>
+                <FormLabel>Price</FormLabel>
+                <RadioGroup
+                  value={form.currency || 'NGN'}
+                  onChange={(value) => handleFormChange('currency', value)}
+                  mb={2}
+                >
+                  <Stack direction="row" spacing={4}>
+                    <Radio value="NGN" colorScheme="purple">Naira (₦)</Radio>
+                    <Radio value="USD" colorScheme="purple">Dollar ($)</Radio>
+                  </Stack>
+                </RadioGroup>
                 <NumberInput
                   value={String(form.price)}
                   onChange={(value) => handleFormChange('price', Number(value || 0))}
@@ -348,6 +391,17 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
               </FormControl>
 
               <FormControl>
+                <FormLabel>Toilets</FormLabel>
+                <NumberInput
+                  value={String(form.toilets || 0)}
+                  onChange={(value) => handleFormChange('toilets', Number(value || 0))}
+                  min={0}
+                >
+                  <NumberInputField />
+                </NumberInput>
+              </FormControl>
+
+              <FormControl>
                 <FormLabel>Sqm</FormLabel>
                 <NumberInput
                   value={String(form.sqft)}
@@ -356,6 +410,15 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
                 >
                   <NumberInputField />
                 </NumberInput>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Video Link (Optional)</FormLabel>
+                <Input
+                  value={form.video_link || ''}
+                  onChange={(e) => handleFormChange('video_link', e.target.value)}
+                  placeholder="https://youtube.com/watch?v=..."
+                />
               </FormControl>
 
 

@@ -32,6 +32,9 @@ import {
   Badge,
   CloseButton,
   Progress,
+  RadioGroup,
+  Radio,
+  Select,
 } from "@chakra-ui/react";
 import { FiCamera, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";
@@ -40,6 +43,7 @@ import CustomSelectField from "../CustomSelect";
 import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/utils/supabase/client";
+import { nigerianStates } from "@/utils/nigerian-states";
 
 const PROPERTY_FEATURES = [
   "Smart Home",
@@ -71,12 +75,19 @@ const PROPERTY_FEATURES = [
 const MIN_IMAGES = 5;
 const MAX_IMAGES = 10;
 
+const getCities = (stateName: string): string[] => {
+  const state = nigerianStates.find((s) => s.name === stateName);
+  return state ? state.cities : [];
+};
+
 interface PropertyFormData {
   title: string;
   address: string;
   price: number;
+  currency: 'NGN' | 'USD';
   bedrooms: number;
   bathrooms: number;
+  toilets: number;
   sqft: number;
   propertyType: string;
   category: string;
@@ -86,6 +97,7 @@ interface PropertyFormData {
   state: string;
   city: string;
   capacity?: string;
+  video_link?: string;
 }
 
 interface PropertyModalProps {
@@ -164,8 +176,10 @@ const createProperty = async (data: any) => {
       {
         title: data.title,
         price: data.price,
+        currency: data.currency || 'NGN',
         bedrooms: data.bedrooms,
         bathrooms: data.bathrooms,
+        toilets: data.toilets || null,
         sqft: data.sqft,
         propertytype: data.propertyType,
         category: data.category,
@@ -179,6 +193,7 @@ const createProperty = async (data: any) => {
         status: "active",
         views: 0,
         capacity: data.capacity || null,
+        video_link: data.video_link || null,
       },
     ])
     .select()
@@ -201,13 +216,16 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
   const toast = useToast();
   const queryClient = useQueryClient();
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [cities, setCities] = useState<string[]>([]);
 
   const [formData, setFormData] = useState<PropertyFormData>({
     title: "",
     address: "",
     price: 0,
+    currency: 'NGN',
     bedrooms: 0,
     bathrooms: 0,
+    toilets: 0,
     sqft: 0,
     propertyType: "",
     category: "",
@@ -217,7 +235,17 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     state: "",
     city: "",
     capacity: "",
+    video_link: "",
   });
+
+  // Update cities when state changes
+  useEffect(() => {
+    if (formData.state) {
+      setCities(getCities(formData.state));
+    } else {
+      setCities([]);
+    }
+  }, [formData.state]);
 
   // React Query mutation
   const mutation = useMutation({
@@ -240,8 +268,10 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         title: "",
         address: "",
         price: 0,
+        currency: 'NGN',
         bedrooms: 0,
         bathrooms: 0,
+        toilets: 0,
         sqft: 0,
         propertyType: "",
         category: "",
@@ -251,6 +281,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         state: "",
         city: "",
         capacity: "",
+        video_link: "",
       });
       setUploadProgress(0);
 
@@ -467,34 +498,37 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
 
               <FormControl isRequired>
                 <FormLabel>State</FormLabel>
-                <Input
-                  name="state"
+                <CustomSelectField
                   value={formData.state}
-                  onChange={handleChange}
-                  placeholder="Enter state"
-                  size="lg"
-                  borderRadius="xl"
-                  _focus={{
-                    borderColor: accentColor,
-                    boxShadow: `0 0 0 1px ${accentColor}`,
+                  handleChange={(value: string | number) => {
+                    setFormData(prev => ({ ...prev, state: String(value), city: "" }));
                   }}
+                  data={nigerianStates.map(s => ({ value: s.name, label: s.name }))}
+                  itemValueKey="value"
+                  itemLabelKey="label"
+                  placeholder="Select state"
+                  width="100%"
                 />
               </FormControl>
 
               <FormControl isRequired>
                 <FormLabel>City</FormLabel>
-                <Input
-                  name="city"
+                 <CustomSelectField
                   value={formData.city}
-                  onChange={handleChange}
-                  placeholder="Enter city"
-                  size="lg"
-                  borderRadius="xl"
-                  _focus={{
-                    borderColor: accentColor,
-                    boxShadow: `0 0 0 1px ${accentColor}`,
+                  handleChange={(value: string | number) => {
+                    setFormData(prev => ({ ...prev, city: String(value) }));
                   }}
+                  data={cities.map(city => ({
+                    value: city,
+                    label: city,
+                  }))}
+                  itemValueKey="value"
+                  itemLabelKey="label"
+                  placeholder="Select city"
+                  width="100%"
+                  disabled={!formData.state}
                 />
+              
               </FormControl>
 
               <FormControl isRequired>
@@ -515,10 +549,20 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
 
               <FormControl isRequired>
                 <FormLabel>Price</FormLabel>
+                <RadioGroup
+                  value={formData.currency}
+                  onChange={(value) => setFormData(prev => ({ ...prev, currency: value as 'NGN' | 'USD' }))}
+                  mb={3}
+                >
+                  <Stack direction="row" spacing={5}>
+                    <Radio value="NGN" colorScheme="purple">Naira (₦)</Radio>
+                    <Radio value="USD" colorScheme="purple">Dollar ($)</Radio>
+                  </Stack>
+                </RadioGroup>
                 <InputGroup size="lg">
                   <InputLeftElement pointerEvents="none">
                     <Text fontSize="xl" color="gray.400">
-                      ₦
+                      {formData.currency === 'USD' ? '$' : '₦'}
                     </Text>
                   </InputLeftElement>
                   <Input
@@ -538,7 +582,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 </InputGroup>
               </FormControl>
 
-              <SimpleGrid columns={3} spacing={4}>
+              <SimpleGrid columns={4} spacing={4}>
                 <FormControl>
                   <FormLabel fontSize="sm">Bedrooms</FormLabel>
                   <NumberInput min={0} value={formData.bedrooms}>
@@ -559,6 +603,21 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   <NumberInput min={0} value={formData.bathrooms}>
                     <NumberInputField
                       name="bathrooms"
+                      onChange={handleNumberChange}
+                      borderRadius="xl"
+                      _focus={{
+                        borderColor: accentColor,
+                        boxShadow: `0 0 0 1px ${accentColor}`,
+                      }}
+                    />
+                  </NumberInput>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel fontSize="sm">Toilets</FormLabel>
+                  <NumberInput min={0} value={formData.toilets}>
+                    <NumberInputField
+                      name="toilets"
                       onChange={handleNumberChange}
                       borderRadius="xl"
                       _focus={{
@@ -602,6 +661,8 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   }}
                 />
               </FormControl>
+
+        
 
               <FormControl>
                 <FormLabel>Features</FormLabel>
@@ -666,7 +727,21 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                   {formData.features.length} features selected
                 </Text>
               </FormControl>
-
+           <FormControl>
+                <FormLabel>Video Link (Optional)</FormLabel>
+                <Input
+                  name="video_link"
+                  value={formData.video_link}
+                  onChange={handleChange}
+                  placeholder="https://youtube.com/watch?v=..."
+                  size="lg"
+                  borderRadius="xl"
+                  _focus={{
+                    borderColor: accentColor,
+                    boxShadow: `0 0 0 1px ${accentColor}`,
+                  }}
+                />
+              </FormControl>
               <FormControl isRequired>
                 <FormLabel>Property Images</FormLabel>
                 <Box

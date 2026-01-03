@@ -42,6 +42,7 @@ interface RecentProperty {
   id: string;
   title: string;
   price: string;
+  currency?: string;
   category: string;
   created_at: string;
   is_featured: boolean;
@@ -322,7 +323,7 @@ export default function AdminDashboardPage() {
                   <VStack align="stretch" spacing={2} fontSize="sm">
                     <HStack justify="space-between">
                       <Text fontWeight="600" color="purple.600">
-                        {formatPrice(property.price)}
+                        {formatPrice(property.price, (property.currency as "NGN" | "USD") || "NGN")}
                       </Text>
                         <Text fontWeight="500">
                         {new Date(property.created_at).toLocaleDateString()}
@@ -373,7 +374,7 @@ export default function AdminDashboardPage() {
                       </Text>
                     </Td>
                     <Td fontWeight="600" fontSize="sm">
-                      {formatPrice(property.price)}
+                      {formatPrice(property.price, (property.currency as "NGN" | "USD") || "NGN")}
                     </Td>
                     <Td color="gray.600" fontSize="sm">
                       {new Date(property.created_at).toLocaleDateString()}
