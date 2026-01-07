@@ -17,13 +17,18 @@ import {
   Spinner,
   Center,
   Icon,
+  useDisclosure,
+  useToast,
+  IconButton,
+  Tooltip,
 } from "@chakra-ui/react";
 import { FaBed, FaBath, FaRuler, FaMapMarkerAlt, FaToilet } from "react-icons/fa";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiEdit } from "react-icons/fi";
 import { createClient } from "@/utils/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { formatPrice } from "@/utils/Method";
+import { PropertyEditModal } from "@/components/dashboard/PropertyEditModal";
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -31,12 +36,30 @@ export default function PropertyDetailPage() {
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   useEffect(() => {
-    if (params.id) {
-      fetchProperty(params.id as string);
-    }
+    const init = async () => {
+      await checkUser();
+      if (params.id) {
+        await fetchProperty(params.id as string);
+      }
+    };
+    init();
   }, [params.id]);
+
+  const checkUser = async () => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) {
+      setUserEmail(user.email);
+      return user.email;
+    }
+    return null;
+  };
 
   const fetchProperty = async (id: string) => {
     const supabase = createClient();
@@ -51,10 +74,63 @@ export default function PropertyDetailPage() {
 
       if (error) throw error;
       setProperty(data);
+      
+      // Check if current user is the owner
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email && data.email === user.email) {
+        setIsOwner(true);
+      }
     } catch (error) {
       console.error("Error fetching property:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditProperty = async (updatedProperty: any) => {
+    const supabase = createClient();
+
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .update({
+          state: updatedProperty.state,
+          city: updatedProperty.city,
+          price: updatedProperty.price,
+          currency: updatedProperty.currency || 'NGN',
+          bedrooms: updatedProperty.bedrooms,
+          bathrooms: updatedProperty.bathrooms,
+          toilets: updatedProperty.toilets,
+          sqft: updatedProperty.sqft,
+          images: updatedProperty.images,
+          video_link: updatedProperty.video_link,
+          title: updatedProperty.title,
+          description: updatedProperty.description,
+        })
+        .eq('id', updatedProperty.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Updated!",
+        description: "Property has been updated successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Refresh property data
+      await fetchProperty(params.id as string);
+      setSelectedImage(0);
+    } catch (error) {
+      console.error('Error updating property:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update property.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -95,14 +171,25 @@ export default function PropertyDetailPage() {
     <Box minH="100vh" bg="gray.50">
       
       <Container maxW="container.xl" py={10}>
-        <Button
-          leftIcon={<FiArrowLeft />}
-          variant="ghost"
-          mb={6}
-          onClick={() => router.back()}
-        >
-          Back
-        </Button>
+        <HStack justify="space-between" mb={6}>
+          <Button
+            leftIcon={<FiArrowLeft />}
+            variant="ghost"
+            onClick={() => router.back()}
+          >
+            Back
+          </Button>
+          {userEmail && (
+            <Tooltip label="Edit property" hasArrow>
+              <IconButton
+                aria-label="Edit property"
+                icon={<FiEdit />}
+                colorScheme="purple"
+                onClick={onOpen}
+              />
+            </Tooltip>
+          )}
+        </HStack>
 
         <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={8}>
           {/* Image Gallery */}
@@ -244,6 +331,15 @@ export default function PropertyDetailPage() {
         </SimpleGrid>
       </Container>
 
+      {/* Edit Modal */}
+      {property && (
+        <PropertyEditModal
+          isOpen={isOpen}
+          onClose={onClose}
+          property={property}
+          onSave={handleEditProperty}
+        />
+      )}
     </Box>
   );
 }

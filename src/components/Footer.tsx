@@ -63,7 +63,7 @@ const Footer = () => {
             <Text fontWeight="500" mb={2}>Contact</Text>
             <Link href="mailto:info@theagent.ng">info@theagent.ng</Link>
             <Link href="tel:+2348053034767">+234 8053034767</Link>
-            <Text>49a Oyibo Adjahor Street, Lekki Phase 1, Lagos.</Text>
+            <Text>49a Oyibo Adjahor Street, Lekki, Lagos.</Text>
           </Stack>
         </Flex>
         
