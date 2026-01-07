@@ -35,19 +35,22 @@ const PropertyCard = ({ property }: { property: Property }) => {
     return "";
   };
 
-  const formatPrice = (price: string | number) => {
+  const formatPrice = (price: string | number, currency: string = 'NGN') => {
     if (!price) return "N/A";
 
     const numericPrice =
       typeof price === "string"
-        ? price.replace(/[₦,NGN\s]/g, "")
+        ? price.replace(/[₦$,NGN,USD\s]/g, "")
         : price.toString();
 
     const priceNum = parseFloat(numericPrice);
 
     if (isNaN(priceNum)) return price;
 
-    return `₦${priceNum.toLocaleString("en-NG", {
+    const locale = currency === 'USD' ? 'en-US' : 'en-NG';
+    const symbol = currency === 'USD' ? '$' : '₦';
+
+    return `${symbol}${priceNum.toLocaleString(locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     })}`;

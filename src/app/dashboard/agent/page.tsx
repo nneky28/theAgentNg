@@ -197,13 +197,14 @@ const AgentDashboard = () => {
     setLoading(true);
 
     try {
+      console.log('Updating property with currency:', property.currency);
       const { error } = await supabase
         .from('properties')
         .update({
           state: property.state,
           city: property.city,
           price: property.price,
-          currency: property.currency,
+          currency: property.currency || 'NGN',
           bedrooms: property.bedrooms,
           bathrooms: property.bathrooms,
           toilets: property.toilets,
@@ -211,6 +212,7 @@ const AgentDashboard = () => {
           images: property.images,
           video_link: property.video_link,
           title: property.title,
+          description: property.description,
         })
         .eq('id', property.id);
 

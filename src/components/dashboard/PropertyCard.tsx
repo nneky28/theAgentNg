@@ -14,28 +14,13 @@ import {
   useColorModeValue,
   IconButton,
   Tooltip,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
-  NumberInput,
-  NumberInputField,
-  RadioGroup,
-  Radio,
-  Button,
-  Stack,
   useDisclosure,
 } from '@chakra-ui/react';
-import { EditIcon, AddIcon, CloseIcon } from '@chakra-ui/icons';
+import { EditIcon } from '@chakra-ui/icons';
 import { FiTrash2 } from 'react-icons/fi';
 import { FaToilet } from 'react-icons/fa';
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { PropertyEditModal } from "./PropertyEditModal";
 
 interface Property {
   id: string;
@@ -52,6 +37,7 @@ interface Property {
   currency?: 'NGN' | 'USD' | string;
   toilets?: number;
   video_link?: string | null;
+  description?: string;
 }
 
 interface PropertyCardProps {
@@ -89,99 +75,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     setImgSrc(getFirstImage(property) ?? '');
   }, [property.images, property]);
 
-  const [form, setForm] = useState({
-    title:property.title||'',
-    state: property.state || '',
-    city: property.city || '',
-    price: property.price || 0,
-    bedrooms: property.bedrooms || 0,
-    bathrooms: property.bathrooms || 0,
-    sqft: property.sqft || 0,
-    status: property.status || 'active',
-    images: property.images ? [...property.images] : [] as string[],
-    currency: property.currency || 'NGN',
-    toilets: property.toilets || 0,
-    video_link: property.video_link || '',
-  });
-
-  useEffect(() => {
-  
-    setForm({
-      title:property.title||'',
-      state: property.state || '',
-      city: property.city || '',
-      price: property.price || 0,
-      bedrooms: property.bedrooms || 0,
-      bathrooms: property.bathrooms || 0,
-      sqft: property.sqft || 0,
-      status: property.status || 'active',
-      images: property.images ? [...property.images] : [],
-      currency: property.currency || 'NGN',
-      toilets: property.toilets || 0,
-      video_link: property.video_link || '',
-    });
-  }, [property]);
-
   const openEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // initialize form with current values
-    setForm({
-      title:property.title||'',
-      state: property.state || '',
-      city: property.city || '',
-      price: property.price || 0,
-      bedrooms: property.bedrooms || 0,
-      bathrooms: property.bathrooms || 0,
-      sqft: property.sqft || 0,
-      status: property.status || 'active',
-      images: property.images ? [...property.images] : [],
-      currency: property.currency || 'NGN',
-      toilets: property.toilets || 0,
-      video_link: property.video_link || '',
-    });
     onOpen();
   };
 
-  const handleFormChange = (field: string, value: string | number | string[]) => {
-    setForm(prev => ({ ...prev, [field]: value }));
-  };
-
-  const addImageField = () => {
-    setForm(prev => ({ ...prev, images: [...(prev.images || []), ''] }));
-  };
-
-  const updateImageAt = (idx: number, value: string) => {
-    setForm(prev => {
-      const arr = [...(prev.images || [])];
-      arr[idx] = value;
-      return { ...prev, images: arr };
-    });
-  };
-
-  const removeImageAt = (idx: number) => {
-    setForm(prev => {
-      const arr = [...(prev.images || [])];
-      arr.splice(idx, 1);
-      return { ...prev, images: arr };
-    });
-  };
-
-  const handleSave = async () => {
-    const updated: Property = {
-      ...property,
-      state: String(form.state).trim(),
-      city: String(form.city).trim(),
-      price: Number(form.price) || 0,
-      currency: form.currency || 'NGN',
-      bedrooms: Number(form.bedrooms) || 0,
-      bathrooms: Number(form.bathrooms) || 0,
-      toilets: Number(form.toilets) || 0,
-      sqft: Number(form.sqft) || 0,
-      status: form.status as Property['status'],
-      images: (form.images || []).map((i) => (i || '').trim()).filter(Boolean),
-      video_link: form.video_link?.trim() || null,
-    };
-
+  const handleModalSave = async (updated: Property) => {
     if (onEdit) {
       await onEdit(updated);
     }
@@ -189,17 +88,17 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     // immediately reflect first image
     const first = updated.images && updated.images.length > 0 ? updated.images[0] : null;
     setImgSrc(first ?? '');
-
-    onClose();
   };
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-NG', {
+  const formatCurrency = (amount: number, currency: string = 'NGN') => {
+    const locale = currency === 'USD' ? 'en-US' : 'en-NG';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: 'NGN',
+      currency: currency,
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  };
 
   const handleCardClick = () => {
     if (onView) onView(property);
@@ -281,7 +180,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             </Text>
           <Flex justify="space-between" w="full" align="center">
             <Text fontWeight="bold" fontSize="lg" color="purple.600">
-              {formatCurrency(property.price)}
+              {formatCurrency(property.price, property.currency || 'NGN')}
             </Text>
             <Text color="gray.600" noOfLines={1} title={property.state}>
               📍 {property.state}, {property.city}
@@ -311,158 +210,17 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             <Text fontSize="sm" color="gray.500">
               👁️ {property.views || 0} views
             </Text>
-
           </Flex>
         </VStack>
       </CardBody>
 
       {/* Edit modal */}
-      <Modal isOpen={isOpen} onClose={onClose} onOverlayClick={onClose}>
-        <ModalOverlay />
-        <ModalContent onClick={(e) => e.stopPropagation()}>
-          <ModalHeader>Edit Property</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Stack spacing={3}>
-           <FormControl>
-                <FormLabel>Title</FormLabel>
-                <Input
-                  value={form.title}
-                  onChange={(e) => handleFormChange('title', e.target.value)}
-                />
-              </FormControl>
-            <FormControl>
-                <FormLabel>State</FormLabel>
-                <Input
-                  value={form.state}
-                  onChange={(e) => handleFormChange('state', e.target.value)}
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>City</FormLabel>
-                <Input
-                  value={form.city}
-                  onChange={(e) => handleFormChange('city', e.target.value)}
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Price</FormLabel>
-                <RadioGroup
-                  value={form.currency || 'NGN'}
-                  onChange={(value) => handleFormChange('currency', value)}
-                  mb={2}
-                >
-                  <Stack direction="row" spacing={4}>
-                    <Radio value="NGN" colorScheme="purple">Naira (₦)</Radio>
-                    <Radio value="USD" colorScheme="purple">Dollar ($)</Radio>
-                  </Stack>
-                </RadioGroup>
-                <NumberInput
-                  value={String(form.price)}
-                  onChange={(value) => handleFormChange('price', Number(value || 0))}
-                  min={0}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Bedrooms</FormLabel>
-                <NumberInput
-                  value={String(form.bedrooms)}
-                  onChange={(value) => handleFormChange('bedrooms', Number(value || 0))}
-                  min={0}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Bathrooms</FormLabel>
-                <NumberInput
-                  value={String(form.bathrooms)}
-                  onChange={(value) => handleFormChange('bathrooms', Number(value || 0))}
-                  min={0}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Toilets</FormLabel>
-                <NumberInput
-                  value={String(form.toilets || 0)}
-                  onChange={(value) => handleFormChange('toilets', Number(value || 0))}
-                  min={0}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Sqm</FormLabel>
-                <NumberInput
-                  value={String(form.sqft)}
-                  onChange={(value) => handleFormChange('sqft', Number(value || 0))}
-                  min={0}
-                >
-                  <NumberInputField />
-                </NumberInput>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Video Link (Optional)</FormLabel>
-                <Input
-                  value={form.video_link || ''}
-                  onChange={(e) => handleFormChange('video_link', e.target.value)}
-                  placeholder="https://youtube.com/watch?v=..."
-                />
-              </FormControl>
-
-
-              <Box>
-                <FormLabel>Images (full URLs)</FormLabel>
-                <VStack align="stretch" spacing={2}>
-                  {(form.images || []).map((img, idx) => (
-                    <HStack key={idx}>
-                      <Input
-                        value={img}
-                        onChange={(e) => updateImageAt(idx, e.target.value)}
-                        placeholder="https://..."
-                      />
-                      <IconButton
-                        aria-label={`Remove image ${idx + 1}`}
-                        icon={<CloseIcon />}
-                        size="sm"
-                        onClick={(e) => { e.stopPropagation(); removeImageAt(idx); }}
-                      />
-                    </HStack>
-                  ))}
-                  <Button
-                    leftIcon={<AddIcon />}
-                    size="sm"
-                    onClick={(e) => { e.stopPropagation(); addImageField(); }}
-                  >
-                    Add image URL
-                  </Button>
-                </VStack>
-              </Box>
-            </Stack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button variant="ghost" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="purple" onClick={handleSave}>
-              Save
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
+      <PropertyEditModal
+        isOpen={isOpen}
+        onClose={onClose}
+        property={property}
+        onSave={handleModalSave}
+      />
 
       <ConfirmDialog
         isOpen={isConfirmOpen}
