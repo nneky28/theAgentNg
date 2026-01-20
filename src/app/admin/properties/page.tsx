@@ -5,53 +5,28 @@ import {
   Box,
   Container,
   Heading,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   Badge,
   useToast,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   Spinner,
   Text,
   Flex,
-  Input,
-  Select,
   IconButton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  VStack,
   HStack,
-  Divider,
-  SimpleGrid,
-  Image,
-  Stack,
+  VStack,
   useBreakpointValue,
-
 } from "@chakra-ui/react";
 import {
-  DeleteIcon,
-  ViewIcon,
-  StarIcon,
-  ChevronDownIcon,
-  CheckIcon,
-  CloseIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { createClient } from "@/utils/supabase/client";
+import { Property } from "@/types";
+import { PropertyFilters } from "@/components/admin/PropertyFilters";
+import { PropertyCard } from "@/components/admin/PropertyCard";
+import { PropertyTable } from "@/components/admin/PropertyTable";
+import { PropertyDetailsModal } from "@/components/admin/PropertyDetailsModal";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { formatPrice } from "@/utils/Method";
 
 
 const AdminPropertiesPage = () => {
@@ -195,7 +170,7 @@ const AdminPropertiesPage = () => {
         .from("properties")
         .update({
           is_featured: !isFeatured,
-          is_published: isFeatured? true : false,
+          is_published: !isFeatured ? true : undefined, // If setting as featured, also publish
           featured_at: !isFeatured ? new Date().toISOString() : null,
         })
         .eq("id", id);
@@ -266,29 +241,15 @@ const AdminPropertiesPage = () => {
         </Badge>
       </Flex>
 
-      <Flex gap={4} mb={6} direction={{ base: "column", md: "row" }}>
-        <Input
-          placeholder="Search properties..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          maxW={{ md: "400px" }}
-          size={{ base: "md", md: "lg" }}
-        />
-        <Select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          maxW={{ md: "200px" }}
-          size={{ base: "md", md: "lg" }}
-        >
-          <option value="all">All Properties</option>
-          <option value="published">Published</option>
-          <option value="draft">Drafts</option>
-          <option value="featured">Featured Only</option>
-        </Select>
-      </Flex>
+      <PropertyFilters
+        searchTerm={searchTerm}
+        onSearchChange={(value) => {
+          setSearchTerm(value);
+          setCurrentPage(1);
+        }}
+        filter={filter}
+        onFilterChange={(value) => setFilter(value as "all" | "featured" | "published" | "draft")}
+      />
 
       {filteredProperties.length === 0 ? (
         <Box
@@ -310,288 +271,27 @@ const AdminPropertiesPage = () => {
         <VStack spacing={4} align="stretch">
           {currentProperties.map((property) => {
             if (!property || !property.id) return null;
-
             return (
-              <Box
+              <PropertyCard
                 key={property.id}
-                bg="white"
-                borderRadius="lg"
-                boxShadow="sm"
-                borderWidth="1px"
-                borderColor="gray.200"
-                overflow="hidden"
-                _hover={{ boxShadow: "md" }}
-                transition="all 0.2s"
-              >
-                {/* Property Image */}
-                {property.images && property.images.length > 0 && (
-                  <Image
-                    src={property.images[0]}
-                    alt={property.title}
-                    h="180px"
-                    w="full"
-                    objectFit="cover"
-                  />
-                )}
-
-                <Box p={4}>
-                  <VStack align="stretch" spacing={3}>
-                    {/* Title and Status */}
-                    <Box>
-                      <Text fontWeight="600" fontSize="md" noOfLines={2}>
-                        {property.title}
-                      </Text>
-                      <Text fontSize={"sm"} mb={2}>
-                        {property.city && property.state
-                          ? `${property.city}, ${property.state}`
-                          : property.city || property.state || "N/A"}
-                      </Text>
-                      <HStack spacing={2} flexWrap="wrap">
-                        <Badge
-                          bg={
-                            property.category === "Properties To Let"
-                              ? "green.100"
-                              : property.category === "Properties For Sale"
-                              ? "orange.100"
-                              : "blue.100"
-                          }
-                          fontSize="xs"
-                        >
-                          {property.category === "Properties To Let"
-                            ? "To Let"
-                            : property.category === "Properties For Sale"
-                            ? "For Sale"
-                            : "Short Let"}
-                        </Badge>
-                        {property.is_featured && (
-                          <Badge colorScheme="yellow" fontSize="xs">
-                            ⭐ Featured
-                          </Badge>
-                        )}
-                        {!property.is_featured && (
-                          <Badge
-                            colorScheme={
-                              property.is_published ? "green" : "gray"
-                            }
-                            fontSize="xs"
-                          >
-                            {property.is_published ? "Published" : "Draft"}
-                          </Badge>
-                        )}
-                      </HStack>
-                    </Box>
-
-                    <Divider />
-
-                    {/* Property Details */}
-                    <Stack spacing={2} fontSize="sm">
-                      <HStack justify="space-between">
-                     
-                        <Text fontWeight="600" color="purple.600">
-                          {formatPrice(property.price, property.currency || 'NGN')}
-                        </Text>
-                             <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          icon={<ChevronDownIcon />}
-                          size="sm"
-                          colorScheme="purple"
-                          aria-label="Actions"
-                        />
-                        <MenuList>
-                          <MenuItem
-                            icon={<ViewIcon />}
-                            onClick={() => handleViewDetails(property)}
-                          >
-                            View Details
-                          </MenuItem>
-                          <MenuItem
-                            icon={
-                              property.is_published ? (
-                                <CloseIcon />
-                              ) : (
-                                <CheckIcon />
-                              )
-                            }
-                            onClick={() =>
-                              handleTogglePublish(
-                                property.id,
-                                property.is_published || false
-                              )
-                            }
-                          >
-                            {property.is_published ? "Unpublish" : "Publish"}
-                          </MenuItem>
-                          <MenuItem
-                            icon={<StarIcon />}
-                            onClick={() =>
-                              handleToggleFeatured(
-                                property.id,
-                                property.is_featured || false
-                              )
-                            }
-                          >
-                            {property.is_featured
-                              ? "Remove Featured"
-                              : "Mark as Featured"}
-                          </MenuItem>
-                          <MenuItem
-                            icon={<DeleteIcon />}
-                            color="red.500"
-                            onClick={() => handleDelete(property.id)}
-                          >
-                            Delete
-                          </MenuItem>
-                        </MenuList>
-                      </Menu>
-                      </HStack>
-                    </Stack>
-
-                    <Divider />
-                  </VStack>
-                </Box>
-              </Box>
+                property={property}
+                onViewDetails={() => handleViewDetails(property)}
+                onTogglePublish={() => handleTogglePublish(property.id, property.is_published || false)}
+                onToggleFeatured={() => handleToggleFeatured(property.id, property.is_featured || false)}
+                onDelete={() => handleDelete(property)}
+              />
             );
           })}
         </VStack>
       ) : (
         // Desktop Table View
-        <Box
-          overflowX="auto"
-          bg="white"
-          borderRadius="xl"
-          boxShadow="sm"
-          borderWidth="1px"
-          borderColor="gray.200"
-        >
-          <Table variant="simple">
-            <Thead bg="gray.50">
-              <Tr>
-                <Th>Category</Th>
-                <Th>Title</Th>
-                <Th>Location</Th>
-                <Th>Price</Th>
-                <Th>Status</Th>
-                <Th>Date</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {currentProperties.map((property) => {
-                if (!property || !property.id) return null;
-
-                return (
-                  <Tr key={property.id} _hover={{ bg: "gray.50" }}>
-                    <Td>
-                      <Badge
-                        bg={
-                          property.category === "Properties To Let"
-                            ? "green.100"
-                            : property.category === "Properties For Sale"
-                            ? "orange.100"
-                            : "blue.100"
-                        }
-                      >
-                        {property.category === "Properties To Let"
-                          ? "To Let"
-                          : property.category === "Properties For Sale"
-                          ? "For Sale"
-                          : "Short Let"}
-                      </Badge>
-                    </Td>
-                    <Td>
-                      <Text noOfLines={1} fontSize="sm">
-                        {property.title || "Untitled"}
-                      </Text>
-                    </Td>
-                    <Td fontSize="sm">
-                      {property?.city && property?.state
-                        ? `${property.city}, ${property.state}`
-                        : property?.city || property?.state || "N/A"}
-                    </Td>
-                    <Td fontWeight="semibold" fontSize="sm">
-                      {formatPrice(property.price, property.currency || 'NGN')}
-                    </Td>
-                    <Td>
-                      {property.is_featured ? (
-                        <Badge colorScheme="yellow" fontSize="xs">
-                          ⭐ Featured
-                        </Badge>
-                      ) : property.is_published ? (
-                        <Badge colorScheme="green" fontSize="xs">
-                          <CheckIcon boxSize={2} mr={1} /> Published
-                        </Badge>
-                      ) : (
-                        <Badge colorScheme="gray" fontSize="xs">
-                          <CloseIcon boxSize={2} mr={1} /> Draft
-                        </Badge>
-                      )}
-                    </Td>
-                    <Td color="gray.600" fontSize="sm">
-                      {new Date(property.created_at).toLocaleDateString()}
-                    </Td>
-                    <Td>
-                      <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          icon={<ChevronDownIcon />}
-                          size="sm"
-                          colorScheme="purple"
-                          aria-label="Actions"
-                        />
-                        <MenuList>
-                          <MenuItem
-                            icon={<ViewIcon />}
-                            onClick={() => handleViewDetails(property)}
-                          >
-                            View Details
-                          </MenuItem>
-                          <MenuItem
-                            icon={
-                              property.is_published ? (
-                                <CloseIcon />
-                              ) : (
-                                <CheckIcon />
-                              )
-                            }
-                            onClick={() =>
-                              handleTogglePublish(
-                                property.id,
-                                property.is_published || false
-                              )
-                            }
-                          >
-                            {property.is_published ? "Unpublish" : "Publish"}
-                          </MenuItem>
-                          <MenuItem
-                            icon={<StarIcon />}
-                            onClick={() =>
-                              handleToggleFeatured(
-                                property.id,
-                                property.is_featured || false
-                              )
-                            }
-                          >
-                            {property.is_featured
-                              ? "Remove Featured"
-                              : "Mark as Featured"}
-                          </MenuItem>
-                          <MenuItem
-                            icon={<DeleteIcon />}
-                            color="red.500"
-                            onClick={() => handleDelete(property.id)}
-                          >
-                            Delete
-                          </MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </Box>
+        <PropertyTable
+          properties={currentProperties}
+          onViewDetails={handleViewDetails}
+          onTogglePublish={(id, isPublished) => handleTogglePublish(id, isPublished)}
+          onToggleFeatured={(id, isFeatured) => handleToggleFeatured(id, isFeatured)}
+          onDelete={handleDelete}
+        />
       )}
 
       {/* Results count */}
@@ -663,166 +363,11 @@ const AdminPropertiesPage = () => {
       )}
 
       {/* View Details Modal */}
-      <Modal
+      <PropertyDetailsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        size={{ base: "full", md: "4xl" }}
-      >
-        <ModalOverlay />
-        <ModalContent m={{ base: 0, md: 4 }}>
-          <ModalHeader>Property Details</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            {selectedProperty && (
-              <VStack spacing={6} align="stretch">
-                {/* Images */}
-                {selectedProperty.images &&
-                  selectedProperty.images.length > 0 && (
-                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                      {selectedProperty.images.slice(0, 4).map((img, idx) => (
-                        <Image
-                          key={idx}
-                          src={img}
-                          alt={`Property ${idx + 1}`}
-                          borderRadius="md"
-                          objectFit="cover"
-                          h="200px"
-                          w="full"
-                        />
-                      ))}
-                    </SimpleGrid>
-                  )}
-
-                {/* Basic Info */}
-                <Box>
-                  <Heading size="md" mb={4}>
-                    {selectedProperty.title}
-                  </Heading>
-                  <Text fontSize={"sm"}>
-                    {selectedProperty.city && selectedProperty.state
-                      ? `${selectedProperty.city}, ${selectedProperty.state}`
-                      : selectedProperty.city || selectedProperty.state || ""}
-                  </Text>
-                  <HStack spacing={4} mb={4} flexWrap="wrap">
-                    <Badge colorScheme="purple" fontSize="lg" px={3} py={1}>
-                      {formatPrice(selectedProperty.price)}
-                    </Badge>
-                    <Badge colorScheme="blue">
-                      {selectedProperty.category}
-                    </Badge>
-                    {selectedProperty.is_featured && (
-                      <Badge colorScheme="yellow">⭐ Featured</Badge>
-                    )}
-                    <Badge
-                      colorScheme={
-                        selectedProperty.is_published ? "green" : "gray"
-                      }
-                    >
-                      {selectedProperty.is_published ? "Published" : "Draft"}
-                    </Badge>
-                  </HStack>
-                </Box>
-
-                <Divider />
-
-                {/* Details Grid */}
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                  <Box>
-                    <Text fontSize="sm" color="gray.600" mb={1}>
-                      Location
-                    </Text>
-                    <Text fontWeight="600">
-                      {selectedProperty.city && selectedProperty.state
-                        ? `${selectedProperty.city}, ${selectedProperty.state}`
-                        : selectedProperty.city ||
-                          selectedProperty.state ||
-                          ""}
-                    </Text>
-                  </Box>
-
-                  <Box>
-                    <Text fontSize="sm" color="gray.600" mb={1}>
-                      Property Type
-                    </Text>
-                    <Text fontWeight="600">
-                      {selectedProperty.type || "Not set"}
-                    </Text>
-                  </Box>
-
-                  {selectedProperty.bedrooms && (
-                    <Box>
-                      <Text fontSize="sm" color="gray.600" mb={1}>
-                        Bedrooms
-                      </Text>
-                      <Text fontWeight="600">{selectedProperty.bedrooms}</Text>
-                    </Box>
-                  )}
-
-                  {selectedProperty.bathrooms && (
-                    <Box>
-                      <Text fontSize="sm" color="gray.600" mb={1}>
-                        Bathrooms
-                      </Text>
-                      <Text fontWeight="600">{selectedProperty.bathrooms}</Text>
-                    </Box>
-                  )}
-
-                  {selectedProperty.size && (
-                    <Box>
-                      <Text fontSize="sm" color="gray.600" mb={1}>
-                        Size
-                      </Text>
-                      <Text fontWeight="600">{selectedProperty.size}</Text>
-                    </Box>
-                  )}
-
-                  <Box>
-                    <Text fontSize="sm" color="gray.600" mb={1}>
-                      Date Added
-                    </Text>
-                    <Text fontWeight="600">
-                      {new Date(
-                        selectedProperty.created_at
-                      ).toLocaleDateString()}
-                    </Text>
-                  </Box>
-                </SimpleGrid>
-
-                {/* Description */}
-                {selectedProperty.description && (
-                  <>
-                    <Divider />
-                    <Box>
-                      <Text fontSize="sm" color="gray.600" mb={2}>
-                        Description
-                      </Text>
-                      <Text>{selectedProperty.description}</Text>
-                    </Box>
-                  </>
-                )}
-
-                {/* Features */}
-                {selectedProperty.features &&
-                  selectedProperty.features.length > 0 && (
-                    <>
-                      <Divider />
-                      <Box>
-                        <Text fontSize="sm" color="gray.600" mb={2}>
-                          Features
-                        </Text>
-                        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2}>
-                          {selectedProperty.features.map((feature, idx) => (
-                            <Text key={idx}>• {feature}</Text>
-                          ))}
-                        </SimpleGrid>
-                      </Box>
-                    </>
-                  )}
-              </VStack>
-            )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+        property={selectedProperty}
+      />
 
     <ConfirmDialog
      isOpen={isConfirmOpen}
