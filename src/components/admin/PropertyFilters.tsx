@@ -45,7 +45,7 @@ export const PropertyFilters = ({
         <option value="draft">Drafts</option>
         <option value="featured">Featured Only</option>
       </Select>
-      <Select
+      {/* <Select
         value={selectedAgent}
         onChange={(e) => onAgentChange(e.target.value)}
         maxW={{ md: "250px" }}
@@ -58,7 +58,7 @@ export const PropertyFilters = ({
             {agent.username || agent.email}
           </option>
         ))}
-      </Select>
+      </Select> */}
     </Flex>
   );
 };
