@@ -352,10 +352,18 @@ const FeaturedListings = () => {
                   </Text>
                   <Badge
                     colorScheme={
-                      property.category === "Properties To Let" ? "green" : "orange"
+                      property.category === "Properties To Let"
+                        ? "green"
+                        : property.category === "Short Let Apartment"
+                        ? "purple"
+                        : "orange"
                     }
                   >
-                    {property.category === "Properties To Let" ? "To Let" : "For Sale"}
+                    {property.category === "Properties To Let"
+                      ? "To Let"
+                      : property.category === "Short Let Apartment"
+                      ? "Short Let"
+                      : "For Sale"}
                   </Badge>
                 </Flex>
               </Box>

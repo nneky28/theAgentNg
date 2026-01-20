@@ -99,6 +99,8 @@ export interface Property {
   created_at?: string;
   updated_at?: string;
   agent_id?: string;
+  owner_id?: string;
+  owner_email?: string;
   views?: number;
   currency?: 'NGN' | 'USD' | string;
   toilets?: number;

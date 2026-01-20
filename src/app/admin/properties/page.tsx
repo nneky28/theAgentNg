@@ -39,6 +39,8 @@ const AdminPropertiesPage = () => {
     "all" | "featured" | "published" | "draft"
   >("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState<string>("all");
+  const [agents, setAgents] = useState<Array<{ id: string; username: string | null; email: string }>>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMobile = useBreakpointValue({ base: true, md: false });
   // Pagination state
@@ -50,8 +52,28 @@ const AdminPropertiesPage = () => {
   const toast = useToast();
 
   useEffect(() => {
+    fetchAgents();
+  }, []);
+
+  useEffect(() => {
     fetchProperties();
-  }, [filter]);
+  }, [filter, selectedAgent]);
+
+  const fetchAgents = async () => {
+    const supabase = createClient();
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("id, username, email")
+        .eq("role", "agent")
+        .order("username", { ascending: true });
+
+      if (error) throw error;
+      setAgents(data || []);
+    } catch (error: any) {
+      console.error("Error fetching agents:", error);
+    }
+  };
 
   const fetchProperties = async () => {
     const supabase = createClient();
@@ -65,6 +87,10 @@ const AdminPropertiesPage = () => {
         query = query.eq("is_published", true);
       } else if (filter === "draft") {
         query = query.eq("is_published", false);
+      }
+
+      if (selectedAgent !== "all") {
+        query = query.eq("owner_id", selectedAgent);
       }
 
       const { data, error } = await query.order("created_at", {
@@ -249,6 +275,12 @@ const AdminPropertiesPage = () => {
         }}
         filter={filter}
         onFilterChange={(value) => setFilter(value as "all" | "featured" | "published" | "draft")}
+        selectedAgent={selectedAgent}
+        onAgentChange={(value) => {
+          setSelectedAgent(value);
+          setCurrentPage(1);
+        }}
+        agents={agents}
       />
 
       {filteredProperties.length === 0 ? (
