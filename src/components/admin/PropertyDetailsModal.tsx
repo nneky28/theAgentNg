@@ -166,6 +166,57 @@ export const PropertyDetailsModal = ({
                 </SimpleGrid>
               </Box>
             )}
+
+            <Divider />
+
+            {/* Property Meta Information */}
+            <Box bg="gray.50" p={4} borderRadius="md">
+              <Text fontWeight="bold" mb={3}>
+                Property Information
+              </Text>
+              <VStack align="stretch" spacing={2} fontSize="sm">
+                {property.owner_id && (
+                  <HStack>
+                    <Text fontWeight="medium" color="gray.600" minW="120px">
+                      Agent ID:
+                    </Text>
+                    <Text>{property.owner_id}</Text>
+                  </HStack>
+                )}
+                {property.owner_email && (
+                  <HStack>
+                    <Text fontWeight="medium" color="gray.600" minW="120px">
+                      Agent Email:
+                    </Text>
+                    <Text>{property.owner_email}</Text>
+                  </HStack>
+                )}
+                {property.created_at && (
+                  <HStack>
+                    <Text fontWeight="medium" color="gray.600" minW="120px">
+                      Submitted:
+                    </Text>
+                    <Text>{new Date(property.created_at).toLocaleString()}</Text>
+                  </HStack>
+                )}
+                {property.published_at && (
+                  <HStack>
+                    <Text fontWeight="medium" color="gray.600" minW="120px">
+                      Published:
+                    </Text>
+                    <Text>{new Date(property.published_at).toLocaleString()}</Text>
+                  </HStack>
+                )}
+                {property.featured_at && (
+                  <HStack>
+                    <Text fontWeight="medium" color="gray.600" minW="120px">
+                      Featured:
+                    </Text>
+                    <Text>{new Date(property.featured_at).toLocaleString()}</Text>
+                  </HStack>
+                )}
+              </VStack>
+            </Box>
           </VStack>
         </ModalBody>
       </ModalContent>
