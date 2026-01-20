@@ -40,13 +40,14 @@ const ShortLetPage = () => {
   const fetchProperties = async () => {
     const supabase = createClient();
     setLoading(true);
-    
+
     try {
       const { data, error } = await supabase
         .from("properties")
         .select("*")
         .eq("category", "Short Let Apartment")
         .eq("is_published", true)
+        .eq("is_archived", false)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -54,7 +55,8 @@ const ShortLetPage = () => {
         throw error;
       }
 
-      console.log("✅ Rent properties loaded:", data?.length);
+      console.log("✅ Short Let properties loaded:", data?.length);
+      console.log("Properties:", data);
       setProperties(data || []);
     } catch (error) {
       console.error("❌ Error in fetchProperties:", error);

@@ -69,6 +69,7 @@ const PROPERTY_FEATURES = [
   "Wi-Fi",
   "Service Charge",
   "24/7 Light",
+  "Water Supply",
 ];
 
 const MIN_IMAGES = 5;

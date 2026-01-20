@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import Hero from '../components/Hero';
 import FeaturedListings from '../components/FeaturedListings';
-import NewsTips from '../components/NewsTips';
+// import NewsTips from '../components/NewsTips';
 import AgentCTA from '@/components/AgentCTA';
 import SearchForm from '@/components/SearchForm';
 import Footer from '@/components/Footer';
@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       <SearchForm />
       <FeaturedListings />
       <AgentCTA />
-      <NewsTips />
+      {/* <NewsTips /> */}
       <Footer/>
     </Box>
   );
