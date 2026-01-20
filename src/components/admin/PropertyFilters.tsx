@@ -21,9 +21,6 @@ export const PropertyFilters = ({
   onSearchChange,
   filter,
   onFilterChange,
-  selectedAgent,
-  onAgentChange,
-  agents,
 }: PropertyFiltersProps) => {
   return (
     <Flex gap={4} mb={6} direction={{ base: "column", md: "row" }}>
