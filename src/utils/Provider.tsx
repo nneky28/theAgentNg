@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, ColorModeScript } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
@@ -13,6 +13,10 @@ const averta = {
 };
 
 const theme = extendTheme({
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
   fonts: {
     heading: `Raleway`,
     body: `Montserrat`,

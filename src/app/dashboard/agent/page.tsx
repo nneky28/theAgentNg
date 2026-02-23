@@ -408,6 +408,7 @@ const AgentDashboard = () => {
                 fontWeight="semibold"
                 cursor="pointer"
                 _hover={{ textDecoration: 'underline' }}
+                onClick={() => router.push('/dashboard/agent/faqs')}
               >
                 FAQs page
               </Text>

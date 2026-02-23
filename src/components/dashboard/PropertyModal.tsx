@@ -34,8 +34,9 @@ import {
   Progress,
   RadioGroup,
   Radio,
+  IconButton,
 } from "@chakra-ui/react";
-import { FiCamera, FiX } from "react-icons/fi";
+import { FiCamera, FiX, FiMove } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { CATEGORY_OPTIONS, PROPERTY_TYPES } from "@/constants/propertyOptions";
 import CustomSelectField from "../CustomSelect";
@@ -72,7 +73,7 @@ const PROPERTY_FEATURES = [
   "Water Supply",
 ];
 
-const MIN_IMAGES = 5;
+const MIN_IMAGES = 3;
 const MAX_IMAGES = 10;
 
 const getCities = (stateName: string): string[] => {
@@ -166,6 +167,17 @@ const createProperty = async (data: any) => {
     throw new Error("You must be logged in to create properties");
   }
 
+  // Get user's whatsapp number
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("whatsapp_no")
+    .eq("id", user.id)
+    .single();
+
+  if (userError) {
+    console.warn("Could not fetch user data:", userError);
+  }
+
   // Upload images first
   const imageUrls = await uploadImages(data.imageFiles, user.id);
 
@@ -190,6 +202,7 @@ const createProperty = async (data: any) => {
         city: data.city,
         owner_email: user.email,
         owner_id: user.id,
+        owner_phone: userData?.whatsapp_no || null,
         status: "active",
         views: 0,
         capacity: data.capacity || null,
@@ -253,10 +266,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
     onSuccess: (data) => {
       console.log("Property added successfully!", data);
       toast({
-        title: "Property added successfully!",
+        title: "🎉 Property Added Successfully!",
+        description: "Your property has been uploaded and is now visible to potential clients.",
         status: "success",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
+        position: "top",
       });
 
       queryClient.invalidateQueries({ queryKey: ["properties"] });
@@ -331,6 +346,33 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+  };
+
+  const moveImage = (fromIndex: number, toIndex: number) => {
+    setFormData((prev) => {
+      const newImages = [...prev.images];
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+      return { ...prev, images: newImages };
+    });
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+    if (fromIndex !== toIndex) {
+      moveImage(fromIndex, toIndex);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -799,48 +841,90 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
                 </Box>
 
                 {formData.images.length > 0 && (
-                  <Wrap spacing={3} mt={4}>
-                    {formData.images.map((img, idx) => (
-                      <WrapItem key={idx}>
-                        <Box position="relative">
+                  <Box mt={4}>
+                    <Text fontSize="sm" color="gray.600" mb={2}>
+                      💡 Drag images to reorder. First image will be the cover photo.
+                    </Text>
+                    <Wrap spacing={3}>
+                      {formData.images.map((img, idx) => (
+                        <WrapItem key={idx}>
                           <Box
-                            borderRadius="lg"
-                            overflow="hidden"
-                            boxShadow="md"
-                            w="80px"
-                            h="80px"
-                            bg="gray.100"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
+                            position="relative"
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, idx)}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, idx)}
+                            cursor="grab"
+                            _active={{ cursor: "grabbing" }}
+                            transition="transform 0.2s"
+                            _hover={{ transform: "scale(1.05)" }}
                           >
-                            <Image
-                              src={URL.createObjectURL(img)}
-                              alt={`property-img-${idx}`}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                              }}
-                              width={80}
-                              height={80}
+                            <Box
+                              borderRadius="lg"
+                              overflow="hidden"
+                              boxShadow="md"
+                              w="100px"
+                              h="100px"
+                              bg="gray.100"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              position="relative"
+                              border={idx === 0 ? "3px solid" : "none"}
+                              borderColor="purple.500"
+                            >
+                              {idx === 0 && (
+                                <Badge
+                                  position="absolute"
+                                  top={1}
+                                  left={1}
+                                  colorScheme="purple"
+                                  fontSize="xs"
+                                  zIndex={2}
+                                >
+                                  Cover
+                                </Badge>
+                              )}
+                              <Image
+                                src={URL.createObjectURL(img)}
+                                alt={`property-img-${idx}`}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
+                                width={100}
+                                height={100}
+                              />
+                              <Box
+                                position="absolute"
+                                bottom={1}
+                                right={1}
+                                bg="blackAlpha.600"
+                                borderRadius="md"
+                                p={1}
+                              >
+                                <Icon as={FiMove} color="white" boxSize={3} />
+                              </Box>
+                            </Box>
+                            <CloseButton
+                              size="sm"
+                              position="absolute"
+                              top={1}
+                              right={1}
+                              color="white"
+                              bg="red.500"
+                              borderRadius="full"
+                              boxShadow="md"
+                              _hover={{ bg: "red.600" }}
+                              onClick={() => removeImage(idx)}
+                              zIndex={3}
                             />
                           </Box>
-                          <CloseButton
-                            size="sm"
-                            position="absolute"
-                            top={1}
-                            right={1}
-                            color="red.500"
-                            bg="white"
-                            borderRadius="full"
-                            boxShadow="sm"
-                            onClick={() => removeImage(idx)}
-                          />
-                        </Box>
-                      </WrapItem>
-                    ))}
-                  </Wrap>
+                        </WrapItem>
+                      ))}
+                    </Wrap>
+                  </Box>
                 )}
               </FormControl>
 

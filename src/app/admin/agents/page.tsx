@@ -147,7 +147,7 @@ export default function AdminAgentsPage() {
       agent.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log("Searchterm", searchTerm);
+
 
   if (loading) {
     return (

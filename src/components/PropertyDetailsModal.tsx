@@ -18,10 +18,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { FaCheck,FaPlay } from "react-icons/fa";
+import { FaCheck, FaPlay } from "react-icons/fa";
 import { Property } from "../types";
 import { Icon } from "@chakra-ui/react";
-
 
 interface PropertyDetailsModalProps {
   isOpen: boolean;
@@ -42,38 +41,54 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
 
   if (!property) return null;
 
+  // Format description text
+
+
   // Generate images - handle both property types
-  const propertyImages = property.images || 
-    (property.imageUrl ? [property.imageUrl] : 
-    (property.image ? [property.image] : []));
+  const propertyImages =
+    property.images ||
+    (property.imageUrl
+      ? [property.imageUrl]
+      : property.image
+        ? [property.image]
+        : []);
 
   const nextImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === propertyImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === propertyImages.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? propertyImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? propertyImages.length - 1 : prevIndex - 1,
     );
   };
 
   const formatPrice = (price: string | number) => {
-    if (!price) return 'N/A';
-    
-    const numericPrice = typeof price === 'string' 
-      ? price.replace(/[₦,NGN\s]/g, '') 
-      : price.toString();
-    
+    if (!price) return "N/A";
+
+    const numericPrice =
+      typeof price === "string"
+        ? price.replace(/[₦,NGN\s]/g, "")
+        : price.toString();
+
     const priceNum = parseFloat(numericPrice);
-    
+
     if (isNaN(priceNum)) return price;
-    
-    return `₦${priceNum.toLocaleString('en-NG', {
+
+    return `₦${priceNum.toLocaleString("en-NG", {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     })}`;
+  };
+  const handleClick = () => {
+    const propertyUrl = `${window.location.origin}/property/${property.id}`;
+    // Format phone number: remove non-digits, replace leading 0 with 234
+    const phoneNumber = property?.owner_phone?.replace(/\D/g, '').replace(/^0/, '234') || '';
+    const message = `Hi, I'm interested in this property: ${property.title}%0A%0AProperty Link: ${propertyUrl}`;
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(whatsappURL, "_blank");
   };
 
   return (
@@ -81,8 +96,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-   
-        <ModalCloseButton  py={2}/>
+          <ModalCloseButton py={2} />
         </ModalHeader>
         <ModalBody pb={6}>
           {/* Image Slideshow */}
@@ -187,37 +201,53 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
           )}
           <Box>
             <Heading size="lg">{property.title}</Heading>
-          <Text color="gray.600" fontSize="sm">
-            {property?.city && property?.state 
+            <Text color="gray.600" fontSize="sm">
+              {property?.city && property?.state
                 ? `${property.city}, ${property.state}`
-                : property?.city || property?.state || 'Location not set'}
-          </Text>
+                : property?.city || property?.state || "Location not set"}
+            </Text>
           </Box>
 
-          <Flex justify="space-between" mb={6} direction={["column", "row"]} gap={4}>
+          <Flex
+            justify="space-between"
+            mb={6}
+            direction={["column", "row"]}
+            gap={4}
+          >
             <Box>
               <Text fontSize="2xl" fontWeight="bold" color="#724B9B">
-                {formatPrice(property.price, property.currency || 'NGN')}
+                {formatPrice(property.price, property.currency || "NGN")}
               </Text>
-            
             </Box>
 
             <Flex gap={4}>
               <Box textAlign="center">
-                <Text fontWeight="bold">{property.beds || property.bedrooms || 0}</Text>
-                <Text color="gray.600" fontSize="sm">Bedrooms</Text>
+                <Text fontWeight="bold">
+                  {property.beds || property.bedrooms || 0}
+                </Text>
+                <Text color="gray.600" fontSize="sm">
+                  Bedrooms
+                </Text>
               </Box>
               <Box textAlign="center">
-                <Text fontWeight="bold">{property.baths || property.bathrooms || 0}</Text>
-                <Text color="gray.600" fontSize="sm">Bathrooms</Text>
+                <Text fontWeight="bold">
+                  {property.baths || property.bathrooms || 0}
+                </Text>
+                <Text color="gray.600" fontSize="sm">
+                  Bathrooms
+                </Text>
               </Box>
               <Box textAlign="center">
                 <Text fontWeight="bold">{property.toilets || 0}</Text>
-                <Text color="gray.600" fontSize="sm">Toilets</Text>
+                <Text color="gray.600" fontSize="sm">
+                  Toilets
+                </Text>
               </Box>
               <Box textAlign="center">
                 <Text fontWeight="bold">{property.sqft || 0}</Text>
-                <Text color="gray.600" fontSize="sm">Sqm</Text>
+                <Text color="gray.600" fontSize="sm">
+                  Sqm
+                </Text>
               </Box>
             </Flex>
           </Flex>
@@ -226,30 +256,31 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
             <Heading size="md" mb={3}>
               Description
             </Heading>
-            <Text color="gray.700" lineHeight="tall">
-              {property.description || "No description available."}
-            </Text>
+            <Box color="gray.700" lineHeight="tall">
+              {property.description}
+            </Box>
           </Box>
 
-          {property.features && Array.isArray(property.features) && property.features.length > 0 && (
-            <Box mb={6}>
-              <Heading size="md" mb={3}>
-                Features
-              </Heading>
-              <SimpleGrid columns={2} spacing={3}>
-                {property.features.map((feature, i) => (
-                  <HStack key={i}>
-                    <Box as={FaCheck} color="green.500" />
-                    <Text fontSize="sm">{feature}</Text>
-                  </HStack>
-                ))}
-              </SimpleGrid>
-            </Box>
-          )}
+          {property.features &&
+            Array.isArray(property.features) &&
+            property.features.length > 0 && (
+              <Box mb={6}>
+                <Heading size="md" mb={3}>
+                  Features
+                </Heading>
+                <SimpleGrid columns={2} spacing={3}>
+                  {property.features.map((feature, i) => (
+                    <HStack key={i}>
+                      <Box as={FaCheck} color="green.500" />
+                      <Text fontSize="sm">{feature}</Text>
+                    </HStack>
+                  ))}
+                </SimpleGrid>
+              </Box>
+            )}
 
           {property.video_link && (
             <Box mb={6}>
-  
               <Button
                 as="a"
                 href={property.video_link}
@@ -264,21 +295,23 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
             </Box>
           )}
 
-          {property.amenities && Array.isArray(property.amenities) && property.amenities.length > 0 && (
-            <Box mb={6}>
-              <Heading size="md" mb={3}>
-                Amenities
-              </Heading>
-              <SimpleGrid columns={2} spacing={3}>
-                {property.amenities.map((amenity, i) => (
-                  <HStack key={i}>
-                    <Box as={FaCheck} color="green.500" />
-                    <Text fontSize="sm">{amenity}</Text>
-                  </HStack>
-                ))}
-              </SimpleGrid>
-            </Box>
-          )}
+          {property.amenities &&
+            Array.isArray(property.amenities) &&
+            property.amenities.length > 0 && (
+              <Box mb={6}>
+                <Heading size="md" mb={3}>
+                  Amenities
+                </Heading>
+                <SimpleGrid columns={2} spacing={3}>
+                  {property.amenities.map((amenity, i) => (
+                    <HStack key={i}>
+                      <Box as={FaCheck} color="green.500" />
+                      <Text fontSize="sm">{amenity}</Text>
+                    </HStack>
+                  ))}
+                </SimpleGrid>
+              </Box>
+            )}
 
           <Box bg="gray.50" p={4} borderRadius="md">
             <Heading size="md" mb={3}>
@@ -291,14 +324,7 @@ const PropertyDetailsModal: React.FC<PropertyDetailsModalProps> = ({
               colorScheme="green"
               size="lg"
               width="full"
-              onClick={() => {
-                const propertyUrl = `${window.location.origin}/property/${property.id}`;
-                const message = `Hi, I'm interested in this property: ${property.title}%0A%0AProperty Link: ${propertyUrl}`;
-                window.open(
-                  `https://wa.me/?text=${message}`,
-                  "_blank"
-                );
-              }}
+              onClick={handleClick}
             >
               Chat on WhatsApp
             </Button>

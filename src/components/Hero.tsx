@@ -7,6 +7,7 @@ import {
   Container, 
   Flex,
   Stack,
+  Link,
   useColorModeValue
 } from '@chakra-ui/react';
 import { BiHome, BiMapPin } from 'react-icons/bi';
@@ -87,6 +88,17 @@ const Hero = () => {
                   the easy way.
                 </Box>
               </Heading>
+              
+              <Text 
+                mt={4} 
+                fontSize="lg" 
+                color="gray.200" 
+                maxW="600px"
+              >
+                Nigeria&apos;s largest network of real estate agents. We connect you with verified agents to help you buy, rent, or short-let properties across Nigeria.
+              </Text>
+              
+       
             </Box>
             
        

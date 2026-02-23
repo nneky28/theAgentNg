@@ -526,13 +526,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerHeader borderBottomWidth="1px">
-              <Image
-                w={["50px", "80px"]}
-                src="/images/L1.png"
-                objectFit="contain"
-                transition="all 0.3s ease"
-                alt="TheAgent Logo"
-              />
+              <Box cursor="pointer" onClick={() => router.push("/")}>
+                <Image
+                  w={["50px", "80px"]}
+                  src="/images/L1.png"
+                  objectFit="contain"
+                  transition="all 0.3s ease"
+                  alt="TheAgent Logo"
+                />
+              </Box>
             </DrawerHeader>
             <DrawerBody>
               <Sidebar

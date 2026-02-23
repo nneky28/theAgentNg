@@ -194,7 +194,7 @@ const TopBar: React.FC<TopBarProps> = ({ setDrawerOpen }) => {
         borderColor="gray.100"
         display={['none','flex']}
       >
-        <Box cursor="pointer" onClick={() => router.push("/dashboard/agent")}>
+        <Box cursor="pointer" onClick={() => router.push("/")}>
           <Image
             w={["26px", "66px"]}
             src="/images/L1.png"

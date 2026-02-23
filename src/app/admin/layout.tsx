@@ -298,14 +298,16 @@ export default function AdminLayout({
   const SidebarContent = () => (
     <VStack h="100%" spacing={0} align="stretch">
       <Box p={6} borderBottom="1px" borderColor="gray.200">
-        <Image
-          w={["26px", "96px"]}
-          src="/images/L1.png"
-          objectFit="contain"
-          transition="all 0.3s ease"
-          alt="TheAgent Logo"
-          px={4}
-          />
+        <Box cursor="pointer" onClick={() => router.push("/")}>
+          <Image
+            w={["26px", "96px"]}
+            src="/images/L1.png"
+            objectFit="contain"
+            transition="all 0.3s ease"
+            alt="TheAgent Logo"
+            px={4}
+            />
+        </Box>
       </Box>
 
       {/* Navigation */}
@@ -406,14 +408,17 @@ export default function AdminLayout({
               onClick={onOpen}
               mr={3}
             />
-            <Image
-              w={["26px", "96px"]}
-              src="/images/L1.png"
-              objectFit="contain"
-              transition="all 0.3s ease"
-              alt="TheAgent Logo"
-              px={4}
-            />
+            <Box cursor="pointer" onClick={() => router.push("/")}>
+              <Image
+                w={["26px", "96px"]}
+                src="/images/L1.png"
+                objectFit="contain"
+                transition="all 0.3s ease"
+                alt="TheAgent Logo"
+                px={4}
+                
+              />
+            </Box>
           </Flex>
 
           {/* Page Content */}

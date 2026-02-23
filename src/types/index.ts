@@ -101,6 +101,7 @@ export interface Property {
   agent_id?: string;
   owner_id?: string;
   owner_email?: string;
+  owner_phone?: string;
   views?: number;
   currency?: 'NGN' | 'USD' | string;
   toilets?: number;

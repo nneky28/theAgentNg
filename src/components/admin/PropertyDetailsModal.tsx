@@ -14,9 +14,12 @@ import {
   Badge,
   Text,
   Divider,
+  Link,
+  Icon,
 } from "@chakra-ui/react";
 import { Property } from "@/types";
 import { formatPrice } from "@/utils/Method";
+import { FaWhatsapp } from "react-icons/fa";
 
 interface PropertyDetailsModalProps {
   isOpen: boolean;
@@ -30,6 +33,8 @@ export const PropertyDetailsModal = ({
   property,
 }: PropertyDetailsModalProps) => {
   if (!property) return null;
+
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={{ base: "full", md: "4xl" }}>
@@ -129,9 +134,9 @@ export const PropertyDetailsModal = ({
                 <Text fontWeight="bold" mb={2}>
                   Description:
                 </Text>
-                <Text color="gray.700" whiteSpace="pre-wrap">
+                <Box color="gray.700">
                   {property.description}
-                </Text>
+                </Box>
               </Box>
             )}
 
@@ -189,6 +194,25 @@ export const PropertyDetailsModal = ({
                       Agent Email:
                     </Text>
                     <Text>{property.owner_email}</Text>
+                  </HStack>
+                )}
+                {property.owner_phone && (
+                  <HStack>
+                    <Text fontWeight="medium" color="gray.600" minW="120px">
+                      Agent Phone:
+                    </Text>
+                    <Link
+                      href={`https://wa.me/${property.owner_phone.replace(/\D/g, '').replace(/^0/, '234')}`}
+                      isExternal
+                      color="green.600"
+                      display="flex"
+                      alignItems="center"
+                      gap={1}
+                      _hover={{ textDecoration: "underline" }}
+                    >
+                      <Icon as={FaWhatsapp} />
+                      <Text>{property.owner_phone}</Text>
+                    </Link>
                   </HStack>
                 )}
                 {property.created_at && (

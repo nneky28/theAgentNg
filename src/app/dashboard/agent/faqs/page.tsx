@@ -22,37 +22,54 @@ const FAQsPage = () => {
 
   const faqs = [
     {
-      question: 'How do I add a new property?',
-      answer: 'Click the "Add New" button on your dashboard, fill in the property details including title, address, price, and upload images. Click "Add Property" to submit.'
+      question: 'What is The Agent Ng?',
+      answer: 'The Agent Ng is a real estate platform designed to connect people searching for properties with Agents in their desired location.'
     },
     {
-      question: 'How will I know when someone is interested in my property?',
-      answer: 'You will receive instant notifications when a user submits a search request for properties in your location. Their contact information will be provided so you can reach out directly.'
+      question: 'How does The Agent Ng work?',
+      answer: 'When a user submits a property search, the information is sent to our Agents within that location. Agents with matching properties are free to contact the user.'
     },
     {
-      question: 'Can I edit my property listings?',
-      answer: 'Yes! Click on any property card in your dashboard and select "Edit" to update the property details, images, or pricing.'
+      question: 'How will I get property notifications?',
+      answer: 'When there is a property search in your location, you will receive notifications in your dashboard and email, with the users contact information.'
     },
     {
-      question: 'How do I update my profile information?',
-      answer: 'Click the menu icon in the top-right corner and select "Edit Profile" to update your username, WhatsApp number, and location preferences.'
+      question: 'Which areas will I get notifications for?',
+      answer: 'You will be notified whenever a user submits a property search within the locations you selected on your profile.'
+    },
+    {
+      question: 'Can I edit my profile information?',
+      answer: 'Yes. Click "Settings" on your dashboard menu to update your username, whatsapp number and location preferences.'
+    },
+    {
+      question: 'Can I list my property on the website?',
+      answer: 'Yes. Click the "Add New" button on your dashboard, fill in the property details, upload images and submit.'
     },
     {
       question: 'What areas can I list properties in?',
-      answer: 'You can list properties in the cities you selected during onboarding (up to 3 cities). You can update your location preferences in Settings.'
+      answer: 'You can list properties in any category, city or state within Nigeria.'
     },
     {
-      question: 'How do I delete my account?',
-      answer: 'Click the menu icon and select "Delete Profile". Please note this action is permanent and will remove all your properties and data.'
+      question: 'How do users find my listings?',
+      answer: 'After you submit your property details, it will be reviewed and published on the website.'
     },
     {
-      question: 'Is there a limit to how many properties I can list?',
-      answer: 'No, there is no limit! You can list as many properties as you want on the platform.'
+      question: 'Can I edit my property listings?',
+      answer: 'Yes. From your dashboard, select "Edit" to update the property details, images, or pricing.'
     },
     {
-      question: 'How do property seekers find my listings?',
-      answer: 'Property seekers search by location, property type, and budget. If your property matches their criteria, it will appear in their search results.'
+      question: 'How many properties can I list?',
+      answer: 'As a new Agent, you can list up to 10 properties on the platform.'
     },
+    {
+      question:'How will I know when someone is interested in my property?',
+      answer:'If a user is interested in your property, they can click the chat button to contact you via Whatsapp.'
+    },
+    {
+      question:'How do I delete my account?',
+      answer:'Click "Settings" from your dashboard menu and select "Delete Profile". Please note this action is permanent and will remove all your properties and data.'
+    }
+    
   ];
 
   return (
@@ -104,8 +121,15 @@ const FAQsPage = () => {
             </Text>
             <Text color="gray.600">
               Contact us at{' '}
-              <Text as="span" color={accentColor} fontWeight="600">
-                support@theagent.ng
+              <Text 
+                as="a" 
+                href="mailto:theagentnigeria@gmail.com"
+                color={accentColor} 
+                fontWeight="600"
+                cursor="pointer"
+                _hover={{ textDecoration: 'underline' }}
+              >
+                theagentnigeria@gmail.com
               </Text>
             </Text>
           </Box>

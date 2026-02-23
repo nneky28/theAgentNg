@@ -3,12 +3,13 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Disable dark mode for now */
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 h1, h2, h3 {
   font-family: var(--font-montserrat);
@@ -38,8 +39,9 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Disable dark mode for now */
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
-}
+} */

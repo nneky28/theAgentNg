@@ -207,9 +207,7 @@ export default function AdminDashboardPage() {
 
       <Box
         bg={colors.primary}
-        color="white"
         p={[4, 8]}
-        // borderRadius="16px"
         borderTopLeftRadius={"16px"}
         borderTopRightRadius={"16px"}
       >
@@ -256,7 +254,7 @@ export default function AdminDashboardPage() {
         borderColor="gray.200"
         p={{ base: 4, md: 6 }}
       >
-        <Heading size="md" mb={4}>
+        <Heading size="md" mb={4} color={'black'}>
           Recent Properties
         </Heading>
         {recentProperties.length === 0 ? (
@@ -276,13 +274,13 @@ export default function AdminDashboardPage() {
                 _hover={{ bg: "gray.50" }}
                 transition="all 0.2s"
               >
-                <VStack align="stretch" spacing={3}>
+                <VStack align="stretch" spacing={3} color={'black'}>
                   {/* Title and Category */}
                   <Box>
                     <Text fontWeight="600" fontSize="md" mb={2} noOfLines={2}>
                       {property.title}
                     </Text>
-                    <HStack spacing={2} flexWrap="wrap">
+                    <HStack spacing={2} flexWrap="wrap" color={'black'}>
                       <Badge
                         bg={
                           property.category === "Properties To Let"
@@ -337,7 +335,7 @@ export default function AdminDashboardPage() {
         ) : (
           // Desktop Table View
           <Box overflowX="auto">
-            <Table variant="simple">
+            <Table >
               <Thead bg="gray.50">
                 <Tr>
                   <Th>Category</Th>
@@ -347,11 +345,12 @@ export default function AdminDashboardPage() {
                   <Th>Status</Th>
                 </Tr>
               </Thead>
-              <Tbody>
+              <Tbody >
                 {recentProperties.map((property) => (
-                  <Tr key={property.id} _hover={{ bg: "gray.50" }}>
-                    <Td>
+                  <Tr key={property.id} _hover={{ bg: "gray.50" }} color={'black'}>
+                    <Td> 
                       <Badge
+                      color={'black'}
                         bg={
                           property.category === "Properties To Let"
                             ? "green.100"

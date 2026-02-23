@@ -114,7 +114,7 @@ const SearchForm = React.memo(() => {
         >
           <SimpleGrid
             columns={{ base: 1, md: 2 }}
-            spacing={8}
+            spacing={[1,1,8]}
             mb={8}
             justifyContent={"space-between"}
             flexDirection={{ base: "column", md: "row" }}
@@ -245,7 +245,7 @@ const SearchForm = React.memo(() => {
               height="100%"
             >
               <FormControl>
-                <FormLabel mt={4}>Area</FormLabel>
+                <FormLabel mt={[1,1,4]}>Area</FormLabel>
                 <Input
                   name="area"
                   value={formData.area}

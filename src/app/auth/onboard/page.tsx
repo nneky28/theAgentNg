@@ -504,7 +504,7 @@ const OnboardingPage: React.FC = () => {
                                 colorScheme="purple"
                                 isDisabled={
                                   !formData.cities.includes(city) &&
-                                  formData.cities.length >= 3
+                                  formData.cities.length >= 5
                                 }
                                 size="lg"
                               >

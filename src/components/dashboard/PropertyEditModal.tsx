@@ -26,8 +26,12 @@ import {
   Box,
   Text,
   useColorModeValue,
+  SimpleGrid,
+  Badge,
+  Icon,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
+import { FiMove } from 'react-icons/fi';
 
 interface Property {
   id: string;
@@ -134,6 +138,39 @@ export const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
       images.splice(index, 1);
       return { ...prev, images };
     });
+  };
+
+  const moveImage = (fromIndex: number, toIndex: number) => {
+    setUploadedImages(prev => {
+      const newImages = [...prev];
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+      return newImages;
+    });
+    setForm(prev => {
+      const images = [...(prev.images || [])];
+      const [movedImage] = images.splice(fromIndex, 1);
+      images.splice(toIndex, 0, movedImage);
+      return { ...prev, images };
+    });
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+    if (fromIndex !== toIndex) {
+      moveImage(fromIndex, toIndex);
+    }
   };
 
   const handleSave = async () => {
@@ -280,39 +317,75 @@ export const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
               <VStack align="stretch" spacing={3}>
                 {/* Display uploaded images with delete button */}
                 {uploadedImages.length > 0 && (
-                  <VStack align="stretch" spacing={2}>
-                    {uploadedImages.map((img, index) => (
-                      <Box
-                        key={index}
-                        position="relative"
-                        borderRadius="md"
-                        overflow="hidden"
-                        border="1px solid"
-                        borderColor="gray.200"
-                      >
-                        <Image
-                          src={img}
-                          alt={`Property ${index + 1}`}
-                          width="100%"
-                          height="150px"
-                          objectFit="cover"
-                        />
-                        <IconButton
-                          aria-label={`Remove image ${index + 1}`}
-                          icon={<CloseIcon />}
-                          size="sm"
-                          position="absolute"
-                          top={2}
-                          right={2}
-                          colorScheme="red"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeImage(index);
-                          }}
-                        />
-                      </Box>
-                    ))}
-                  </VStack>
+                  <Box>
+                    <Text fontSize="sm" color="gray.600" mb={3}>
+                      💡 Drag images to reorder. First image will be the cover photo.
+                    </Text>
+                    <SimpleGrid columns={2} spacing={3}>
+                      {uploadedImages.map((img, index) => (
+                        <Box
+                          key={index}
+                          position="relative"
+                          borderRadius="md"
+                          overflow="hidden"
+                          border={index === 0 ? "3px solid" : "1px solid"}
+                          borderColor={index === 0 ? "purple.500" : "gray.200"}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, index)}
+                          onDragOver={handleDragOver}
+                          onDrop={(e) => handleDrop(e, index)}
+                          cursor="grab"
+                          _active={{ cursor: "grabbing" }}
+                          transition="transform 0.2s"
+                          _hover={{ transform: "scale(1.02)" }}
+                        >
+                          {index === 0 && (
+                            <Badge
+                              position="absolute"
+                              top={2}
+                              left={2}
+                              colorScheme="purple"
+                              fontSize="xs"
+                              zIndex={2}
+                            >
+                              Cover
+                            </Badge>
+                          )}
+                          <Image
+                            src={img}
+                            alt={`Property ${index + 1}`}
+                            width="100%"
+                            height="150px"
+                            objectFit="cover"
+                          />
+                          <Box
+                            position="absolute"
+                            bottom={2}
+                            left={2}
+                            bg="blackAlpha.600"
+                            borderRadius="md"
+                            p={1}
+                          >
+                            <Icon as={FiMove} color="white" boxSize={3} />
+                          </Box>
+                          <IconButton
+                            aria-label={`Remove image ${index + 1}`}
+                            icon={<CloseIcon />}
+                            size="sm"
+                            position="absolute"
+                            top={2}
+                            right={2}
+                            colorScheme="red"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeImage(index);
+                            }}
+                            zIndex={3}
+                          />
+                        </Box>
+                      ))}
+                    </SimpleGrid>
+                  </Box>
                 )}
 
                 {/* Upload button */}
